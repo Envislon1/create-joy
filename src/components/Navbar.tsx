@@ -6,7 +6,6 @@ import { useAuth } from '@/hooks/useAuth';
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/leaderboard', label: 'Leaderboard' },
   { href: '/register', label: 'Register' },
 ];
 
@@ -28,35 +27,10 @@ export function Navbar() {
             <span className="text-xl font-bold text-primary">Little Stars</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className={`nav-link ${isActive(link.href) ? 'nav-link-active' : ''}`}
-              >
-                {link.label}
-              </Link>
-            ))}
-            {!loading && (
-              user ? (
-                <Button asChild size="sm">
-                  <Link to="/dashboard">Dashboard</Link>
-                </Button>
-              ) : (
-                <Button asChild size="sm">
-                  <Link to="/auth">Login</Link>
-                </Button>
-              )
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
+          {/* Menu Button */}
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
@@ -64,9 +38,9 @@ export function Navbar() {
           </Button>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Collapsed Navigation */}
         {isOpen && (
-          <div className="md:hidden py-4 border-t border-border animate-fade-in">
+          <div className="py-4 border-t border-border animate-fade-in">
             <div className="flex flex-col gap-2">
               {navLinks.map((link) => (
                 <Link
