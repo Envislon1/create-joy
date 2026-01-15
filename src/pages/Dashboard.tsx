@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Layout } from '@/components/Layout';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -67,11 +67,11 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <DashboardLayout>
         <div className="container-main py-16 flex justify-center">
           <p>Loading...</p>
         </div>
-      </Layout>
+      </DashboardLayout>
     );
   }
 
@@ -80,7 +80,7 @@ const Dashboard = () => {
   }
 
   return (
-    <Layout>
+    <DashboardLayout>
       <div className="container-main py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -167,7 +167,7 @@ const Dashboard = () => {
           )}
         </div>
       </div>
-    </Layout>
+    </DashboardLayout>
   );
 };
 
