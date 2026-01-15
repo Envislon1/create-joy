@@ -15,24 +15,24 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 20% 15%;
 
-    --primary: 45 90% 50%;
-    --primary-foreground: 0 0% 10%;
+    --primary: 330 80% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 38 85% 55%;
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 340 75% 55%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 220 15% 94%;
     --muted-foreground: 220 10% 45%;
 
-    --accent: 45 80% 95%;
-    --accent-foreground: 45 90% 35%;
+    --accent: 330 60% 95%;
+    --accent-foreground: 330 80% 40%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 220 15% 90%;
     --input: 220 15% 90%;
-    --ring: 45 90% 50%;
+    --ring: 330 80% 60%;
 
     --radius: 0.5rem;
 
@@ -46,7 +46,7 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* Custom tokens */
-    --gold: 45 90% 50%;
+    --pink: 330 80% 60%;
     --silver: 210 10% 70%;
     --bronze: 30 60% 50%;
     --success: 145 65% 40%;
@@ -62,24 +62,24 @@
     --popover: 220 20% 12%;
     --popover-foreground: 0 0% 95%;
 
-    --primary: 45 90% 50%;
-    --primary-foreground: 0 0% 10%;
+    --primary: 330 80% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 38 85% 55%;
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 340 75% 55%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 220 15% 20%;
     --muted-foreground: 220 10% 60%;
 
-    --accent: 45 60% 20%;
-    --accent-foreground: 45 90% 80%;
+    --accent: 330 40% 20%;
+    --accent-foreground: 330 80% 80%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 220 15% 20%;
     --input: 220 15% 20%;
-    --ring: 45 90% 50%;
+    --ring: 330 80% 60%;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;

@@ -38,15 +38,15 @@ export function Navbar() {
           </Button>
         </div>
 
-        {/* Collapsed Navigation */}
+        {/* Dropdown Navigation - Right aligned */}
         {isOpen && (
-          <div className="py-4 border-t border-border animate-fade-in">
-            <div className="flex flex-col gap-2">
+          <div className="absolute right-4 top-16 w-56 bg-card border border-border rounded-lg shadow-lg animate-fade-in z-50">
+            <div className="flex flex-col py-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
-                  className={`px-4 py-3 rounded-lg transition-colors ${
+                  className={`px-4 py-3 transition-colors ${
                     isActive(link.href)
                       ? 'bg-accent text-accent-foreground'
                       : 'hover:bg-muted'
@@ -58,13 +58,13 @@ export function Navbar() {
               ))}
               <Link
                 to="/terms"
-                className="px-4 py-3 rounded-lg transition-colors hover:bg-muted"
+                className="px-4 py-3 transition-colors hover:bg-muted"
                 onClick={() => setIsOpen(false)}
               >
                 Terms
               </Link>
               {!loading && (
-                <div className="px-4 pt-2">
+                <div className="px-4 py-2 border-t border-border mt-2">
                   {user ? (
                     <Button asChild className="w-full">
                       <Link to="/dashboard" onClick={() => setIsOpen(false)}>
