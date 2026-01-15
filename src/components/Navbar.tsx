@@ -6,7 +6,6 @@ import { useAuth } from '@/hooks/useAuth';
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/register', label: 'Register' },
 ];
 
 export function Navbar() {
