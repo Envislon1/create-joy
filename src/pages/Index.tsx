@@ -29,12 +29,9 @@ const Index = () => {
             <CountdownTimer targetDate={settings?.contest_start_date || ''} />
           )}
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+          <div className="flex justify-center mt-10">
             <Button asChild size="lg">
               <Link to="/register">Register Your Child</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/leaderboard">View Leaderboard</Link>
             </Button>
           </div>
         </div>
@@ -72,8 +69,50 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2">Win Prizes</h3>
               <p className="text-muted-foreground">
-                The child with the most votes at the end of the contest wins amazing prizes.
+                Top contestants win amazing cash prizes!
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Prize Section */}
+      <section className="py-16 bg-gradient-to-b from-primary/10 to-background">
+        <div className="container-main">
+          <h2 className="text-3xl font-bold text-center mb-4">Prize Pool</h2>
+          <p className="text-center text-muted-foreground mb-10">
+            Payments are released at 8am the following day after contest ends
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="bg-card border-2 border-gold rounded-lg p-6 text-center shadow-lg">
+              <div className="text-gold text-sm font-semibold mb-2">🥇 1st Place</div>
+              <div className="text-3xl font-bold text-foreground">₦4,000,000</div>
+              <p className="text-muted-foreground text-sm mt-2">Grand Prize</p>
+            </div>
+
+            <div className="bg-card border-2 border-silver rounded-lg p-6 text-center shadow-md">
+              <div className="text-silver text-sm font-semibold mb-2">🥈 2nd Place</div>
+              <div className="text-2xl font-bold text-foreground">₦2,000,000</div>
+              <p className="text-muted-foreground text-sm mt-2">Runner Up</p>
+            </div>
+
+            <div className="bg-card border-2 border-bronze rounded-lg p-6 text-center shadow-md">
+              <div className="text-bronze text-sm font-semibold mb-2">🥉 3rd Place</div>
+              <div className="text-2xl font-bold text-foreground">₦1,000,000</div>
+              <p className="text-muted-foreground text-sm mt-2">Second Runner Up</p>
+            </div>
+
+            <div className="bg-card border border-border rounded-lg p-6 text-center">
+              <div className="text-muted-foreground text-sm font-semibold mb-2">4th Place</div>
+              <div className="text-xl font-bold text-foreground">Compensation</div>
+              <p className="text-muted-foreground text-sm mt-2">Prize Awarded</p>
+            </div>
+
+            <div className="bg-card border border-border rounded-lg p-6 text-center">
+              <div className="text-muted-foreground text-sm font-semibold mb-2">5th Place</div>
+              <div className="text-xl font-bold text-foreground">Compensation</div>
+              <p className="text-muted-foreground text-sm mt-2">Prize Awarded</p>
             </div>
           </div>
         </div>

@@ -141,9 +141,9 @@ const Register = () => {
                         <SelectValue placeholder="Select age" />
                       </SelectTrigger>
                       <SelectContent>
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((age) => (
+                        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((age) => (
                           <SelectItem key={age} value={String(age)}>
-                            {age} {age === 1 ? 'year' : 'years'} old
+                            {age === 0 ? 'Under 1 year' : `${age} ${age === 1 ? 'year' : 'years'} old`}
                           </SelectItem>
                         ))}
                       </SelectContent>

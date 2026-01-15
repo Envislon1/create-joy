@@ -21,7 +21,7 @@ const Terms = () => {
             <section>
               <h2 className="text-xl font-semibold mb-3">2. Eligibility</h2>
               <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-                <li>The contest is open to children aged 1-12 years.</li>
+                <li>The contest is open to children aged 0-12 years.</li>
                 <li>Registration must be completed by a parent or legal guardian.</li>
                 <li>Each child can only be registered once per contest period.</li>
                 <li>The parent/guardian must provide accurate and truthful information during registration.</li>
@@ -63,9 +63,11 @@ const Terms = () => {
             <section>
               <h2 className="text-xl font-semibold mb-3">6. Prizes</h2>
               <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-                <li>Prizes will be awarded to the top contestants based on the final vote count.</li>
-                <li>Prize details will be announced before or during the contest period.</li>
-                <li>Prizes are non-transferable and cannot be exchanged for cash.</li>
+                <li>1st Place: ₦4,000,000 (Four Million Naira)</li>
+                <li>2nd Place: ₦2,000,000 (Two Million Naira)</li>
+                <li>3rd Place: ₦1,000,000 (One Million Naira)</li>
+                <li>4th and 5th Place: Compensation prizes will be awarded</li>
+                <li>All prize payments are released at 8am the following day after the contest ends.</li>
                 <li>Winners will be contacted using the contact information provided during registration.</li>
                 <li>Winners must claim their prizes within 30 days of announcement.</li>
               </ul>
