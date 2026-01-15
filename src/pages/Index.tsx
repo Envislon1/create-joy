@@ -81,9 +81,9 @@ const Index = () => {
         <div className="container-main">
           <h2 className="text-3xl font-bold text-center mb-8">Prize Pool</h2>
           <div className="max-w-xl mx-auto text-center space-y-3">
-            <p className="text-foreground">🥇 1st Place: ₦4,000,000</p>
-            <p className="text-foreground">🥈 2nd Place: ₦2,000,000</p>
-            <p className="text-foreground">🥉 3rd Place: ₦1,000,000</p>
+            <p className="text-foreground">1st Place: ₦4,000,000</p>
+            <p className="text-foreground">2nd Place: ₦2,000,000</p>
+            <p className="text-foreground">3rd Place: ₦1,000,000</p>
             <p className="text-foreground">4th & 5th Place: Compensation</p>
             <p className="text-muted-foreground text-sm mt-6">
               Payments are released at 8am the following day after contest ends.
