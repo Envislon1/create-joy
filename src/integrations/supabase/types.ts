@@ -14,7 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      contest_settings: {
+        Row: {
+          contest_end_date: string | null
+          contest_name: string
+          contest_start_date: string
+          created_at: string
+          id: string
+          is_active: boolean
+          updated_at: string
+          vote_price: number
+        }
+        Insert: {
+          contest_end_date?: string | null
+          contest_name?: string
+          contest_start_date?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+          vote_price?: number
+        }
+        Update: {
+          contest_end_date?: string | null
+          contest_name?: string
+          contest_start_date?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+          vote_price?: number
+        }
+        Relationships: []
+      }
+      contestants: {
+        Row: {
+          age: number
+          created_at: string
+          gallery_images: string[] | null
+          id: string
+          is_approved: boolean
+          name: string
+          parent_email: string
+          parent_id: string | null
+          parent_name: string
+          parent_phone: string
+          profile_image: string | null
+          sex: string
+          updated_at: string
+          votes: number
+        }
+        Insert: {
+          age: number
+          created_at?: string
+          gallery_images?: string[] | null
+          id?: string
+          is_approved?: boolean
+          name: string
+          parent_email: string
+          parent_id?: string | null
+          parent_name: string
+          parent_phone: string
+          profile_image?: string | null
+          sex: string
+          updated_at?: string
+          votes?: number
+        }
+        Update: {
+          age?: number
+          created_at?: string
+          gallery_images?: string[] | null
+          id?: string
+          is_approved?: boolean
+          name?: string
+          parent_email?: string
+          parent_id?: string | null
+          parent_name?: string
+          parent_phone?: string
+          profile_image?: string | null
+          sex?: string
+          updated_at?: string
+          votes?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
