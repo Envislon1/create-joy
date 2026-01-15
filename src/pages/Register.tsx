@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,12 @@ const Register = () => {
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
+    // Parent/Account information
+    parentName: '',
+    email: '',
+    password: '',
+    phone: '',
+    // Child information
     childName: '',
     childAge: '',
     childSex: '',
@@ -23,15 +29,11 @@ const Register = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      toast({
-        title: "Login Required",
-        description: "Please login to register your child.",
-      });
-      navigate('/auth');
-    }
-  }, [user, loading, navigate, toast]);
+  // If user is already logged in, redirect to dashboard
+  if (!loading && user) {
+    navigate('/dashboard');
+    return null;
+  }
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -49,10 +51,19 @@ const Register = () => {
       return;
     }
 
-    if (!user) {
+    if (!formData.email || !formData.password) {
       toast({
         title: "Error",
-        description: "You must be logged in to register a child.",
+        description: "Please provide email and password.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters.",
         variant: "destructive",
       });
       return;
@@ -61,8 +72,30 @@ const Register = () => {
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase.from('contestants').insert({
-        parent_id: user.id,
+      // Step 1: Create user account
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`,
+          data: {
+            full_name: formData.parentName,
+          }
+        }
+      });
+
+      if (authError) throw authError;
+
+      if (!authData.user) {
+        throw new Error('Failed to create account');
+      }
+
+      // Step 2: Register the child (contestant)
+      const { error: contestantError } = await supabase.from('contestants').insert({
+        parent_id: authData.user.id,
+        parent_name: formData.parentName,
+        parent_email: formData.email,
+        parent_phone: formData.phone,
         name: formData.childName,
         age: parseInt(formData.childAge),
         sex: formData.childSex === 'male' ? 'Male' : 'Female',
@@ -70,11 +103,11 @@ const Register = () => {
         is_approved: false,
       });
 
-      if (error) throw error;
+      if (contestantError) throw contestantError;
 
       toast({
         title: "Registration Successful!",
-        description: "Your child has been registered and is pending approval.",
+        description: "Your child has been registered and is pending approval. Please check your email to verify your account.",
       });
       navigate('/dashboard');
     } catch (error: any) {
@@ -98,10 +131,6 @@ const Register = () => {
     );
   }
 
-  if (!user) {
-    return null;
-  }
-
   return (
     <Layout>
       <div className="container-main py-8">
@@ -109,11 +138,65 @@ const Register = () => {
           <div className="text-center mb-10">
             <h1 className="text-3xl font-bold mb-2">Register Your Child</h1>
             <p className="text-muted-foreground">
-              Fill out the form below to register your child for the contest.
+              Create an account and register your child for the contest.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Parent/Account Information */}
+            <div className="bg-card border border-border rounded-lg p-6">
+              <h2 className="text-lg font-semibold mb-4">Parent Account Information</h2>
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="parentName">Your Full Name</Label>
+                  <Input
+                    id="parentName"
+                    placeholder="Enter your full name"
+                    value={formData.parentName}
+                    onChange={(e) => handleInputChange('parentName', e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Create a password (min. 6 characters)"
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Child Information */}
             <div className="bg-card border border-border rounded-lg p-6">
               <h2 className="text-lg font-semibold mb-4">Child Information</h2>
@@ -204,8 +287,15 @@ const Register = () => {
               size="lg"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Submitting...' : 'Register Child'}
+              {isSubmitting ? 'Creating Account & Registering...' : 'Register Child'}
             </Button>
+
+            <p className="text-center text-sm text-muted-foreground">
+              Already have an account?{' '}
+              <Link to="/auth" className="text-primary hover:underline">
+                Login here
+              </Link>
+            </p>
           </form>
         </div>
       </div>
