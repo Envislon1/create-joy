@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CountdownTimer } from "@/components/CountdownTimer";
 
 interface Contestant {
   id: string;
@@ -102,7 +103,7 @@ export function Leaderboard() {
 
   return (
     <div className="w-full max-w-3xl mx-auto px-2 sm:px-4">
-      <h2 className="text-xl font-semibold mb-4">Leaderboard</h2>
+      <CountdownTimer />
       
       <div className="overflow-x-auto">
         <table className="w-full table-fixed">
