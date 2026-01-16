@@ -10,13 +10,14 @@ interface VoteSectionProps {
 }
 
 export function VoteSection({ contestantId, contestantName, onVoteSuccess }: VoteSectionProps) {
-  const [amount, setAmount] = useState(VOTE_PRICE_NAIRA);
+  const [amount, setAmount] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   // Calculate vote count from amount
-  const voteCount = Math.floor(amount / VOTE_PRICE_NAIRA);
+  const numericAmount = parseInt(amount) || 0;
+  const voteCount = Math.floor(numericAmount / VOTE_PRICE_NAIRA);
   const validAmount = voteCount * VOTE_PRICE_NAIRA;
 
   const handlePayment = () => {
@@ -61,7 +62,7 @@ export function VoteSection({ contestantId, contestantName, onVoteSuccess }: Vot
           if (data.success) {
             toast({ title: `Successfully added ${voteCount} vote(s) for ${contestantName}!` });
             onVoteSuccess();
-            setAmount(VOTE_PRICE_NAIRA);
+            setAmount("");
             setEmail("");
           } else {
             toast({ title: data.message || "Vote failed", variant: "destructive" });
@@ -97,27 +98,37 @@ export function VoteSection({ contestantId, contestantName, onVoteSuccess }: Vot
         </div>
 
         <div>
-          <label className="block text-sm mb-1">Amount (₦)</label>
+          <label className="block text-sm mb-1">Amount (₦) - Minimum ₦{VOTE_PRICE_NAIRA}</label>
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
             value={amount}
-            onChange={(e) => setAmount(Math.max(VOTE_PRICE_NAIRA, parseInt(e.target.value) || VOTE_PRICE_NAIRA))}
+            onChange={(e) => {
+              const value = e.target.value.replace(/[^0-9]/g, "");
+              setAmount(value);
+            }}
             className="w-full border border-border p-2 rounded"
-            min={VOTE_PRICE_NAIRA}
-            placeholder={`Minimum ₦${VOTE_PRICE_NAIRA}`}
+            placeholder={`Enter amount (min ₦${VOTE_PRICE_NAIRA})`}
           />
         </div>
 
-        <p className="text-sm text-muted-foreground">
-          ₦{validAmount.toLocaleString()} = <strong>{voteCount} vote{voteCount !== 1 ? 's' : ''}</strong> (₦{VOTE_PRICE_NAIRA} per vote)
-        </p>
+        {numericAmount > 0 && (
+          <p className="text-sm text-muted-foreground">
+            ₦{validAmount.toLocaleString()} = <strong>{voteCount} vote{voteCount !== 1 ? 's' : ''}</strong> (₦{VOTE_PRICE_NAIRA} per vote)
+            {numericAmount !== validAmount && numericAmount >= VOTE_PRICE_NAIRA && (
+              <span className="block text-xs mt-1">
+                ₦{(numericAmount - validAmount).toLocaleString()} will not be charged (partial vote)
+              </span>
+            )}
+          </p>
+        )}
 
         <button
           onClick={handlePayment}
           disabled={loading || voteCount < 1}
           className="w-full bg-primary text-primary-foreground p-2 rounded disabled:opacity-50"
         >
-          {loading ? "Processing..." : `Pay ₦${validAmount.toLocaleString()} to Vote`}
+          {loading ? "Processing..." : `Add ${voteCount} Vote${voteCount !== 1 ? 's' : ''}`}
         </button>
       </div>
     </div>
