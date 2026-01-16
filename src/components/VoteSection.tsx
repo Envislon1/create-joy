@@ -43,50 +43,66 @@ export function VoteSection({ contestantId, contestantName, onVoteSuccess }: Vot
     const reference = generateReference();
     const amountInKobo = validAmount * 100;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handler = (window as any).PaystackPop.setup({
-      key: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxx", // Replace with your Paystack public key
-      email: email,
-      amount: amountInKobo,
-      currency: "NGN",
-      ref: reference,
-      metadata: {
-        contestant_id: contestantId,
-        vote_count: voteCount,
-      },
-      callback: async (response: { reference: string }) => {
-        try {
-          const { data, error } = await supabase.functions.invoke("verify-payment", {
-            body: {
-              reference: response.reference,
-              contestant_id: contestantId,
-              vote_count: voteCount,
-              voter_email: email,
-            },
-          });
+    try {
+      // Check if Paystack is loaded
+      if (!(window as any).PaystackPop) {
+        throw new Error("Payment system not loaded. Please refresh the page.");
+      }
 
-          if (error) throw error;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handler = (window as any).PaystackPop.setup({
+        key: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxx", // Replace with your Paystack public key
+        email: email,
+        amount: amountInKobo,
+        currency: "NGN",
+        ref: reference,
+        metadata: {
+          contestant_id: contestantId,
+          vote_count: voteCount,
+        },
+        callback: async (response: { reference: string }) => {
+          try {
+            const { data, error } = await supabase.functions.invoke("verify-payment", {
+              body: {
+                reference: response.reference,
+                contestant_id: contestantId,
+                vote_count: voteCount,
+                voter_email: email,
+              },
+            });
 
-          if (data.success) {
-            toast({ title: `Successfully added ${voteCount} vote(s) for ${contestantName}!` });
-            onVoteSuccess();
-            setRawAmount("");
-            setEmail("");
-          } else {
-            toast({ title: data.message || "Vote failed", variant: "destructive" });
+            if (error) throw error;
+
+            if (data.success) {
+              toast({ title: `Successfully added ${voteCount} vote(s) for ${contestantName}!` });
+              onVoteSuccess();
+              setRawAmount("");
+              setEmail("");
+            } else {
+              toast({ title: data.message || "Vote failed", variant: "destructive" });
+            }
+          } catch (error: any) {
+            console.error("Verification error:", error);
+            toast({ title: "Payment verification failed", variant: "destructive" });
+          } finally {
+            setLoading(false);
           }
-        } catch (error: any) {
-          console.error("Verification error:", error);
-          toast({ title: "Payment verification failed", variant: "destructive" });
-        }
-        setLoading(false);
-      },
-      onClose: () => {
-        setLoading(false);
-      },
-    });
+        },
+        onClose: () => {
+          setLoading(false);
+        },
+      });
 
-    handler.openIframe();
+      handler.openIframe();
+    } catch (error: any) {
+      console.error("Paystack error:", error);
+      toast({ 
+        title: "Payment Error", 
+        description: error.message || "Could not initialize payment. Please try again.",
+        variant: "destructive" 
+      });
+      setLoading(false);
+    }
   };
 
   return (
