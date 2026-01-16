@@ -112,15 +112,18 @@ export function VoteSection({ contestantId, contestantName, onVoteSuccess }: Vot
             <input
               type="text"
               inputMode="numeric"
-              value={rawAmount ? formatCurrency(numericAmount) : ""}
+              value={rawAmount}
               onChange={(e) => {
                 const value = e.target.value.replace(/[^0-9]/g, "");
                 setRawAmount(value);
               }}
               className="w-full border border-border p-2 pl-7 rounded"
-              placeholder={`0.00`}
+              placeholder="0"
             />
           </div>
+          {numericAmount > 0 && (
+            <p className="text-xs text-muted-foreground mt-1">= ₦{formatCurrency(numericAmount)}</p>
+          )}
         </div>
 
         {numericAmount > 0 && (
