@@ -4,6 +4,7 @@ import { CountdownTimer } from "@/components/CountdownTimer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Trophy, Medal, Award, Star } from "lucide-react";
+import Autoplay from "embla-carousel-autoplay";
 import heroImage from "@/assets/hero-family.jpg";
 import amaraImg from "@/assets/contestants/amara.jpg";
 import adaezeImg from "@/assets/contestants/adaeze.jpg";
@@ -107,6 +108,13 @@ const Home = () => {
               align: "start",
               loop: true,
             }}
+            plugins={[
+              Autoplay({
+                delay: 3000,
+                stopOnInteraction: false,
+                stopOnMouseEnter: true,
+              }),
+            ]}
             className="w-full"
           >
             <CarouselContent className="-ml-2 md:-ml-4">
