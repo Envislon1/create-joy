@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Trophy, Medal, Award, Star } from "lucide-react";
 import heroImage from "@/assets/hero-family.jpg";
 import amaraImg from "@/assets/contestants/amara.jpg";
 import adaezeImg from "@/assets/contestants/adaeze.jpg";
@@ -94,50 +96,104 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Contestants */}
+      {/* Featured Contestants Carousel */}
       <section className="py-12 px-4 bg-muted">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">
             Our Little Stars
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {contestants.map((contestant) => (
-              <div key={contestant.name} className="text-center group">
-                <div className="aspect-square overflow-hidden rounded-xl shadow-lg mb-3 bg-background">
-                  <OptimizedImage
-                    src={contestant.image}
-                    alt={contestant.name}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-                <p className="font-semibold text-foreground">{contestant.name}</p>
-              </div>
-            ))}
-          </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {contestants.map((contestant) => (
+                <CarouselItem key={contestant.name} className="pl-2 md:pl-4 basis-1/2 md:basis-1/3 lg:basis-1/4">
+                  <div className="text-center group">
+                    <div className="aspect-square overflow-hidden rounded-xl shadow-lg mb-3 bg-background">
+                      <OptimizedImage
+                        src={contestant.image}
+                        alt={contestant.name}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                    <p className="font-semibold text-foreground">{contestant.name}</p>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden sm:flex -left-4" />
+            <CarouselNext className="hidden sm:flex -right-4" />
+          </Carousel>
         </div>
       </section>
 
       {/* Prizes Section */}
-      <section className="py-12 px-4 bg-background">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-8">Prizes</h2>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center p-4 bg-muted rounded border border-border">
-              <span className="font-medium">1st Place</span>
-              <span className="text-lg font-bold">₦4,000,000</span>
+      <section className="py-16 px-4 bg-gradient-to-b from-background to-muted">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">Win Amazing Prizes</h2>
+            <p className="text-muted-foreground">Top performers take home incredible rewards!</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {/* 1st Place - Hero Card */}
+            <div className="md:col-span-1 md:order-2">
+              <div className="relative bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 rounded-2xl p-6 text-center shadow-2xl transform md:-translate-y-4">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <div className="bg-yellow-300 rounded-full p-3 shadow-lg">
+                    <Trophy className="w-8 h-8 text-yellow-700" />
+                  </div>
+                </div>
+                <div className="mt-6">
+                  <span className="text-yellow-100 font-medium text-sm uppercase tracking-wide">1st Place</span>
+                  <div className="text-4xl md:text-5xl font-bold text-white mt-2 mb-1">₦4M</div>
+                  <span className="text-yellow-100 text-sm">Four Million Naira</span>
+                </div>
+                <div className="mt-4 flex justify-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-yellow-200 text-yellow-200" />
+                  ))}
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between items-center p-4 bg-muted rounded border border-border">
-              <span className="font-medium">2nd Place</span>
-              <span className="text-lg font-bold">₦2,000,000</span>
+            
+            {/* 2nd Place */}
+            <div className="md:order-1">
+              <div className="bg-gradient-to-br from-slate-300 via-slate-400 to-slate-500 rounded-2xl p-6 text-center shadow-xl h-full flex flex-col justify-center">
+                <div className="bg-slate-200 rounded-full p-3 w-fit mx-auto mb-4 shadow-md">
+                  <Medal className="w-6 h-6 text-slate-600" />
+                </div>
+                <span className="text-slate-100 font-medium text-sm uppercase tracking-wide">2nd Place</span>
+                <div className="text-3xl md:text-4xl font-bold text-white mt-2 mb-1">₦2M</div>
+                <span className="text-slate-200 text-sm">Two Million Naira</span>
+              </div>
             </div>
-            <div className="flex justify-between items-center p-4 bg-muted rounded border border-border">
-              <span className="font-medium">3rd Place</span>
-              <span className="text-lg font-bold">₦1,000,000</span>
+            
+            {/* 3rd Place */}
+            <div className="md:order-3">
+              <div className="bg-gradient-to-br from-orange-400 via-orange-500 to-orange-700 rounded-2xl p-6 text-center shadow-xl h-full flex flex-col justify-center">
+                <div className="bg-orange-200 rounded-full p-3 w-fit mx-auto mb-4 shadow-md">
+                  <Award className="w-6 h-6 text-orange-700" />
+                </div>
+                <span className="text-orange-100 font-medium text-sm uppercase tracking-wide">3rd Place</span>
+                <div className="text-3xl md:text-4xl font-bold text-white mt-2 mb-1">₦1M</div>
+                <span className="text-orange-200 text-sm">One Million Naira</span>
+              </div>
             </div>
-            <div className="flex justify-between items-center p-4 bg-muted rounded border border-border">
-              <span className="font-medium">4th & 5th Place</span>
-              <span className="text-muted-foreground">Compensation</span>
+          </div>
+          
+          {/* 4th & 5th Place */}
+          <div className="bg-muted border border-border rounded-xl p-6 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Star className="w-5 h-5 text-primary" />
+              <span className="font-semibold text-lg">4th & 5th Place</span>
+              <Star className="w-5 h-5 text-primary" />
             </div>
+            <p className="text-muted-foreground">Special compensation packages for our runners-up</p>
           </div>
         </div>
       </section>
