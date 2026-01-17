@@ -1,5 +1,5 @@
-// Paystack public key - this is safe to expose in frontend
-export const PAYSTACK_PUBLIC_KEY = "pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxx";
+// Paystack public key from environment variable
+export const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
 
 export const VOTE_PRICE_NAIRA = 50;
 
