@@ -55,40 +55,36 @@ export function CountdownTimer() {
     setLoading(false);
   };
 
-  if (loading || !timeLeft) {
-    return null;
-  }
-
-  const isEnded = timeLeft.days === 0 && timeLeft.hours === 0 && 
+  const isEnded = timeLeft && timeLeft.days === 0 && timeLeft.hours === 0 && 
                   timeLeft.minutes === 0 && timeLeft.seconds === 0;
 
   if (isEnded) {
     return (
-      <div className="text-center py-4 border border-border rounded mb-6">
-        <p className="text-lg font-semibold text-destructive">Contest Has Ended</p>
+      <div className="text-center py-4 border border-white/30 rounded mb-6">
+        <p className="text-lg font-semibold text-red-300">Contest Has Ended</p>
       </div>
     );
   }
 
   return (
-    <div className="text-center py-4 border border-border rounded mb-6">
-      <p className="text-sm text-muted-foreground mb-2">Contest ends in:</p>
+    <div className="text-center py-4 border border-white/30 rounded mb-6">
+      <p className="text-sm text-white/80 mb-2">Contest ends in:</p>
       <div className="flex justify-center gap-4 text-lg font-semibold">
         <div>
-          <span className="text-2xl">{timeLeft.days}</span>
-          <span className="text-sm text-muted-foreground ml-1">days</span>
+          <span className="text-2xl text-white">{loading || !timeLeft ? "--" : timeLeft.days}</span>
+          <span className="text-sm text-white/80 ml-1">days</span>
         </div>
         <div>
-          <span className="text-2xl">{timeLeft.hours}</span>
-          <span className="text-sm text-muted-foreground ml-1">hrs</span>
+          <span className="text-2xl text-white">{loading || !timeLeft ? "--" : timeLeft.hours}</span>
+          <span className="text-sm text-white/80 ml-1">hrs</span>
         </div>
         <div>
-          <span className="text-2xl">{timeLeft.minutes}</span>
-          <span className="text-sm text-muted-foreground ml-1">min</span>
+          <span className="text-2xl text-white">{loading || !timeLeft ? "--" : timeLeft.minutes}</span>
+          <span className="text-sm text-white/80 ml-1">min</span>
         </div>
         <div>
-          <span className="text-2xl">{timeLeft.seconds}</span>
-          <span className="text-sm text-muted-foreground ml-1">sec</span>
+          <span className="text-2xl text-white">{loading || !timeLeft ? "--" : timeLeft.seconds}</span>
+          <span className="text-sm text-white/80 ml-1">sec</span>
         </div>
       </div>
     </div>

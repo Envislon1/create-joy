@@ -115,20 +115,24 @@ export function Leaderboard() {
             </tr>
           </thead>
           <tbody>
-            {contestants.map((contestant, index) => (
-              <tr key={contestant.id} className="border-b border-white/20 last:border-b-0">
-                <td className="p-3 sm:p-4 font-semibold text-sm sm:text-base text-white">{index + 1}</td>
-                <td className="p-3 sm:p-4 truncate">
-                  <Link
-                    to={`/contestant/${contestant.unique_slug}`}
-                    className="hover:underline text-sm sm:text-base text-white"
-                  >
-                    {contestant.full_name}
-                  </Link>
-                </td>
-                <td className="p-3 sm:p-4 text-right text-sm sm:text-base whitespace-nowrap text-white">{contestant.votes.toLocaleString()}</td>
-              </tr>
-            ))}
+            {contestants.map((contestant, index) => {
+              const position = index + 1;
+              const ordinalSuffix = position === 1 ? "ST" : position === 2 ? "ND" : position === 3 ? "RD" : "TH";
+              return (
+                <tr key={contestant.id} className="border-b border-white/20 last:border-b-0">
+                  <td className="p-3 sm:p-4 font-semibold text-sm sm:text-base text-white">{position}{ordinalSuffix}</td>
+                  <td className="p-3 sm:p-4 truncate">
+                    <Link
+                      to={`/contestant/${contestant.unique_slug}`}
+                      className="hover:underline text-sm sm:text-base text-white"
+                    >
+                      {contestant.full_name}
+                    </Link>
+                  </td>
+                  <td className="p-3 sm:p-4 text-right text-sm sm:text-base whitespace-nowrap text-white">{contestant.votes.toLocaleString()}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

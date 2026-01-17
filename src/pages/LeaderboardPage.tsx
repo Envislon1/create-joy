@@ -6,7 +6,7 @@ const LeaderboardPage = () => {
       {/* Blue Header Section */}
       <div className="py-12 px-4 text-section-blue-foreground">
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-3xl font-bold mb-2">Our Little Stars</h1>
+          <h1 className="text-3xl font-bold mb-2">Leaderboard</h1>
           <p className="text-white/80">
             See who's leading the contest. Click on a contestant to vote for them!
           </p>
