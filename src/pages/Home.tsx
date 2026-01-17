@@ -189,9 +189,9 @@ const Home = () => {
       </section>
 
       {/* Featured Contestants Carousel */}
-      <section className="py-12 px-4 bg-muted">
+      <section className="py-12 px-4 bg-section-blue">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-10 text-white">
             Our Little Stars
           </h2>
           <Carousel
@@ -206,7 +206,7 @@ const Home = () => {
               {contestants.map((contestant) => (
                 <CarouselItem key={contestant.name} className="pl-2 md:pl-4 basis-1/2 md:basis-1/3 lg:basis-1/4">
                   <div className="text-center group">
-                    <div className="aspect-square overflow-hidden rounded-xl shadow-lg mb-3 bg-background">
+                    <div className="aspect-square overflow-hidden rounded-xl shadow-lg mb-3 bg-white">
                       <OptimizedImage
                         src={contestant.image}
                         alt={contestant.name}
@@ -214,13 +214,13 @@ const Home = () => {
                         onLoadComplete={handleContestantImageLoad}
                       />
                     </div>
-                    <p className="font-semibold text-foreground">{contestant.name}</p>
+                    <p className="font-semibold text-white">{contestant.name}</p>
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="hidden sm:flex -left-4" />
-            <CarouselNext className="hidden sm:flex -right-4" />
+            <CarouselPrevious className="hidden sm:flex -left-4 bg-white/20 border-white/30 text-white hover:bg-white/30" />
+            <CarouselNext className="hidden sm:flex -right-4 bg-white/20 border-white/30 text-white hover:bg-white/30" />
           </Carousel>
         </div>
       </section>
