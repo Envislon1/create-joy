@@ -8,7 +8,11 @@ interface TimeLeft {
   seconds: number;
 }
 
-export function CountdownTimer() {
+interface CountdownTimerProps {
+  variant?: "light" | "dark";
+}
+
+export function CountdownTimer({ variant = "dark" }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState(true);
@@ -58,33 +62,39 @@ export function CountdownTimer() {
   const isEnded = timeLeft && timeLeft.days === 0 && timeLeft.hours === 0 && 
                   timeLeft.minutes === 0 && timeLeft.seconds === 0;
 
+  // Style based on variant
+  const isLight = variant === "light";
+  const borderClass = isLight ? "border-border" : "border-white/30";
+  const labelClass = isLight ? "text-muted-foreground" : "text-white/80";
+  const valueClass = isLight ? "text-foreground" : "text-white";
+
   if (isEnded) {
     return (
-      <div className="text-center py-4 border border-white/30 rounded mb-6">
-        <p className="text-lg font-semibold text-red-300">Contest Has Ended</p>
+      <div className={`text-center py-4 border ${borderClass} rounded mb-6`}>
+        <p className="text-lg font-semibold text-red-500">Contest Has Ended</p>
       </div>
     );
   }
 
   return (
-    <div className="text-center py-4 border border-white/30 rounded mb-6">
-      <p className="text-sm text-white/80 mb-2">Contest ends in:</p>
+    <div className={`text-center py-4 border ${borderClass} rounded mb-6`}>
+      <p className={`text-sm ${labelClass} mb-2`}>Contest ends in:</p>
       <div className="flex justify-center gap-4 text-lg font-semibold">
         <div>
-          <span className="text-2xl text-white">{loading || !timeLeft ? "--" : timeLeft.days}</span>
-          <span className="text-sm text-white/80 ml-1">days</span>
+          <span className={`text-2xl ${valueClass}`}>{loading || !timeLeft ? "--" : timeLeft.days}</span>
+          <span className={`text-sm ${labelClass} ml-1`}>days</span>
         </div>
         <div>
-          <span className="text-2xl text-white">{loading || !timeLeft ? "--" : timeLeft.hours}</span>
-          <span className="text-sm text-white/80 ml-1">hrs</span>
+          <span className={`text-2xl ${valueClass}`}>{loading || !timeLeft ? "--" : timeLeft.hours}</span>
+          <span className={`text-sm ${labelClass} ml-1`}>hrs</span>
         </div>
         <div>
-          <span className="text-2xl text-white">{loading || !timeLeft ? "--" : timeLeft.minutes}</span>
-          <span className="text-sm text-white/80 ml-1">min</span>
+          <span className={`text-2xl ${valueClass}`}>{loading || !timeLeft ? "--" : timeLeft.minutes}</span>
+          <span className={`text-sm ${labelClass} ml-1`}>min</span>
         </div>
         <div>
-          <span className="text-2xl text-white">{loading || !timeLeft ? "--" : timeLeft.seconds}</span>
-          <span className="text-sm text-white/80 ml-1">sec</span>
+          <span className={`text-2xl ${valueClass}`}>{loading || !timeLeft ? "--" : timeLeft.seconds}</span>
+          <span className={`text-sm ${labelClass} ml-1`}>sec</span>
         </div>
       </div>
     </div>
