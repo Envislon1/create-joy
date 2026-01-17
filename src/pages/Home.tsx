@@ -169,7 +169,7 @@ const Home = () => {
       {/* Countdown & Actions */}
       <section className="py-12 px-4 bg-background">
         <div className="max-w-3xl mx-auto text-center">
-          <CountdownTimer />
+          <CountdownTimer variant="light" />
 
           <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
             <Link
@@ -246,59 +246,59 @@ const Home = () => {
       </section>
 
       {/* Prizes Section */}
-      <section className="py-16 px-4 bg-muted">
+      <section className="py-16 px-4 bg-section-blue">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">Win Amazing Prizes</h2>
-            <p className="text-muted-foreground">Top performers take home incredible rewards!</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Win Amazing Prizes</h2>
+            <p className="text-white/80">Top performers take home incredible rewards!</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* 1st Place */}
             <div className="md:col-span-1 md:order-2">
-              <div className="relative bg-card border-2 border-primary rounded-2xl p-6 text-center shadow-lg transform md:-translate-y-4">
+              <div className="relative bg-white/10 border-2 border-white/40 rounded-2xl p-6 text-center shadow-lg transform md:-translate-y-4 backdrop-blur-sm">
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <div className="bg-primary rounded-full p-3 shadow-md">
-                    <Trophy className="w-8 h-8 text-primary-foreground" />
+                  <div className="bg-yellow-400 rounded-full p-3 shadow-md">
+                    <Trophy className="w-8 h-8 text-yellow-900" />
                   </div>
                 </div>
                 <div className="mt-6">
-                  <span className="text-muted-foreground font-medium text-sm uppercase tracking-wide">1st Place</span>
-                  <div className="text-4xl md:text-5xl font-bold text-foreground mt-2 mb-1">₦4M</div>
-                  <span className="text-muted-foreground text-sm">Four Million Naira</span>
+                  <span className="text-white/70 font-medium text-sm uppercase tracking-wide">1st Place</span>
+                  <div className="text-4xl md:text-5xl font-bold text-white mt-2 mb-1">₦4M</div>
+                  <span className="text-white/70 text-sm">Four Million Naira</span>
                 </div>
               </div>
             </div>
             
             {/* 2nd Place */}
             <div className="md:order-1">
-              <div className="bg-card border border-border rounded-2xl p-6 text-center shadow-md h-full flex flex-col justify-center">
-                <div className="bg-secondary rounded-full p-3 w-fit mx-auto mb-4">
-                  <Medal className="w-6 h-6 text-muted-foreground" />
+              <div className="bg-white/10 border border-white/30 rounded-2xl p-6 text-center shadow-md h-full flex flex-col justify-center backdrop-blur-sm">
+                <div className="bg-gray-300 rounded-full p-3 w-fit mx-auto mb-4">
+                  <Medal className="w-6 h-6 text-gray-600" />
                 </div>
-                <span className="text-muted-foreground font-medium text-sm uppercase tracking-wide">2nd Place</span>
-                <div className="text-3xl md:text-4xl font-bold text-foreground mt-2 mb-1">₦2M</div>
-                <span className="text-muted-foreground text-sm">Two Million Naira</span>
+                <span className="text-white/70 font-medium text-sm uppercase tracking-wide">2nd Place</span>
+                <div className="text-3xl md:text-4xl font-bold text-white mt-2 mb-1">₦2M</div>
+                <span className="text-white/70 text-sm">Two Million Naira</span>
               </div>
             </div>
             
             {/* 3rd Place */}
             <div className="md:order-3">
-              <div className="bg-card border border-border rounded-2xl p-6 text-center shadow-md h-full flex flex-col justify-center">
-                <div className="bg-secondary rounded-full p-3 w-fit mx-auto mb-4">
-                  <Award className="w-6 h-6 text-muted-foreground" />
+              <div className="bg-white/10 border border-white/30 rounded-2xl p-6 text-center shadow-md h-full flex flex-col justify-center backdrop-blur-sm">
+                <div className="bg-amber-600 rounded-full p-3 w-fit mx-auto mb-4">
+                  <Award className="w-6 h-6 text-amber-100" />
                 </div>
-                <span className="text-muted-foreground font-medium text-sm uppercase tracking-wide">3rd Place</span>
-                <div className="text-3xl md:text-4xl font-bold text-foreground mt-2 mb-1">₦1M</div>
-                <span className="text-muted-foreground text-sm">One Million Naira</span>
+                <span className="text-white/70 font-medium text-sm uppercase tracking-wide">3rd Place</span>
+                <div className="text-3xl md:text-4xl font-bold text-white mt-2 mb-1">₦1M</div>
+                <span className="text-white/70 text-sm">One Million Naira</span>
               </div>
             </div>
           </div>
           
           {/* 4th & 5th Place */}
-          <div className="bg-card border border-border rounded-xl p-6 text-center">
-            <span className="font-semibold text-lg">4th & 5th Place</span>
-            <p className="text-muted-foreground mt-1">Special compensation packages for our runners-up</p>
+          <div className="bg-white/10 border border-white/30 rounded-xl p-6 text-center backdrop-blur-sm">
+            <span className="font-semibold text-lg text-white">4th & 5th Place</span>
+            <p className="text-white/70 mt-1">Special compensation packages for our runners-up</p>
           </div>
         </div>
       </section>
