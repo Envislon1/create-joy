@@ -102,31 +102,31 @@ export function Leaderboard() {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-2 sm:px-4">
+    <div className="w-full max-w-3xl mx-auto">
       <CountdownTimer />
       
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto bg-section-blue rounded-lg">
         <table className="w-full table-fixed">
           <thead>
-            <tr className="border-b-2 border-foreground">
-              <th className="text-left p-2 sm:p-3 text-sm sm:text-base w-[15%] font-semibold">Pos</th>
-              <th className="text-left p-2 sm:p-3 text-sm sm:text-base w-[55%] font-semibold">Name</th>
-              <th className="text-right p-2 sm:p-3 text-sm sm:text-base w-[30%] font-semibold">Votes</th>
+            <tr className="border-b-2 border-white/30">
+              <th className="text-left p-3 sm:p-4 text-sm sm:text-base w-[15%] font-semibold text-white">Pos</th>
+              <th className="text-left p-3 sm:p-4 text-sm sm:text-base w-[55%] font-semibold text-white">Name</th>
+              <th className="text-right p-3 sm:p-4 text-sm sm:text-base w-[30%] font-semibold text-white">Votes</th>
             </tr>
           </thead>
           <tbody>
             {contestants.map((contestant, index) => (
-              <tr key={contestant.id}>
-                <td className="p-2 sm:p-3 font-semibold text-sm sm:text-base">{index + 1}</td>
-                <td className="p-2 sm:p-3 truncate">
+              <tr key={contestant.id} className="border-b border-white/20 last:border-b-0">
+                <td className="p-3 sm:p-4 font-semibold text-sm sm:text-base text-white">{index + 1}</td>
+                <td className="p-3 sm:p-4 truncate">
                   <Link
                     to={`/contestant/${contestant.unique_slug}`}
-                    className="hover:underline text-sm sm:text-base"
+                    className="hover:underline text-sm sm:text-base text-white"
                   >
                     {contestant.full_name}
                   </Link>
                 </td>
-                <td className="p-2 sm:p-3 text-right text-sm sm:text-base whitespace-nowrap">{contestant.votes.toLocaleString()}</td>
+                <td className="p-3 sm:p-4 text-right text-sm sm:text-base whitespace-nowrap text-white">{contestant.votes.toLocaleString()}</td>
               </tr>
             ))}
           </tbody>

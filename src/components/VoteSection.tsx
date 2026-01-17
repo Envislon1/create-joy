@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { generateReference, VOTE_PRICE_NAIRA } from "@/lib/paystack";
+import { generateReference, VOTE_PRICE_NAIRA, PAYSTACK_PUBLIC_KEY } from "@/lib/paystack";
 import { supabase } from "@/integrations/supabase/client";
 
 interface VoteSectionProps {
@@ -49,9 +49,14 @@ export function VoteSection({ contestantId, contestantName, onVoteSuccess }: Vot
         throw new Error("Payment system not loaded. Please refresh the page.");
       }
 
+      // Check if Paystack key is configured
+      if (!PAYSTACK_PUBLIC_KEY) {
+        throw new Error("Payment system not configured. Please contact support.");
+      }
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const handler = (window as any).PaystackPop.setup({
-        key: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxx", // Replace with your Paystack public key
+        key: PAYSTACK_PUBLIC_KEY,
         email: email,
         amount: amountInKobo,
         currency: "NGN",
