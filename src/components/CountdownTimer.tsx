@@ -36,8 +36,6 @@ export function CountdownTimer({ variant = "dark" }: CountdownTimerProps) {
       const now = new Date().getTime();
       const startTime = dates.startDate!.getTime();
       const endTime = dates.endDate!.getTime();
-      const oneMinuteBeforeEnd = endTime - 60 * 1000;
-
       // Determine contest phase
       if (now < startTime) {
         // Contest hasn't started yet
@@ -59,16 +57,15 @@ export function CountdownTimer({ variant = "dark" }: CountdownTimerProps) {
           minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
           seconds: Math.floor((difference % (1000 * 60)) / 1000),
         });
-
-        // Trigger vote boost 1 minute before end
-        if (now >= oneMinuteBeforeEnd && !boostTriggered.current) {
+      } else {
+        // Contest has ended - trigger vote boost once
+        setContestPhase("ended");
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        
+        if (!boostTriggered.current) {
           boostTriggered.current = true;
           triggerVoteBoost();
         }
-      } else {
-        // Contest has ended
-        setContestPhase("ended");
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
         clearInterval(timer);
       }
     }, 1000);
@@ -114,34 +111,35 @@ export function CountdownTimer({ variant = "dark" }: CountdownTimerProps) {
   const labelClass = isLight ? "text-muted-foreground" : "text-white/80";
   const valueClass = isLight ? "text-foreground" : "text-white";
 
-  if (contestPhase === "ended") {
-    return (
-      <div className={`text-center py-4 border ${borderClass} rounded mb-6`}>
-        <p className="text-lg font-semibold text-red-500">Contest Has Ended</p>
-      </div>
-    );
-  }
+  // Show zeros when contest has ended instead of "Contest Has Ended" text
+  const displayTimeLeft = contestPhase === "ended" 
+    ? { days: 0, hours: 0, minutes: 0, seconds: 0 }
+    : timeLeft;
 
-  const countdownLabel = contestPhase === "before" ? "Contest begins in:" : "Contest ends in:";
+  const countdownLabel = contestPhase === "before" 
+    ? "Contest begins in:" 
+    : contestPhase === "during" 
+      ? "Contest ends in:" 
+      : "Contest ended:";
 
   return (
     <div className={`text-center py-4 border ${borderClass} rounded mb-6`}>
       <p className={`text-sm ${labelClass} mb-2`}>{countdownLabel}</p>
       <div className="flex justify-center gap-4 text-lg font-semibold">
         <div>
-          <span className={`text-2xl ${valueClass}`}>{loading || !timeLeft ? "--" : timeLeft.days}</span>
+          <span className={`text-2xl ${valueClass}`}>{loading || !displayTimeLeft ? "--" : displayTimeLeft.days}</span>
           <span className={`text-sm ${labelClass} ml-1`}>days</span>
         </div>
         <div>
-          <span className={`text-2xl ${valueClass}`}>{loading || !timeLeft ? "--" : timeLeft.hours}</span>
+          <span className={`text-2xl ${valueClass}`}>{loading || !displayTimeLeft ? "--" : displayTimeLeft.hours}</span>
           <span className={`text-sm ${labelClass} ml-1`}>hrs</span>
         </div>
         <div>
-          <span className={`text-2xl ${valueClass}`}>{loading || !timeLeft ? "--" : timeLeft.minutes}</span>
+          <span className={`text-2xl ${valueClass}`}>{loading || !displayTimeLeft ? "--" : displayTimeLeft.minutes}</span>
           <span className={`text-sm ${labelClass} ml-1`}>min</span>
         </div>
         <div>
-          <span className={`text-2xl ${valueClass}`}>{loading || !timeLeft ? "--" : timeLeft.seconds}</span>
+          <span className={`text-2xl ${valueClass}`}>{loading || !displayTimeLeft ? "--" : displayTimeLeft.seconds}</span>
           <span className={`text-sm ${labelClass} ml-1`}>sec</span>
         </div>
       </div>

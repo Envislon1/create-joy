@@ -12,6 +12,7 @@ import nkechiImg from "@/assets/contestants/nkechi.webp";
 import zuriImg from "@/assets/contestants/zuri.webp";
 import tundeImg from "@/assets/contestants/tunde.webp";
 import "@fontsource/great-vibes";
+import "@fontsource/pacifico";
 
 const contestants = [
   { name: "Samuel", image: amaraImg },
@@ -148,7 +149,7 @@ const Home = () => {
           <h1 
             className="text-4xl md:text-6xl text-white drop-shadow-lg mb-4 animate-fade-in"
             style={{ 
-              fontFamily: "'Great Vibes', cursive",
+              fontFamily: "'Pacifico', cursive",
               animation: "title-reveal 1.5s ease-out forwards"
             }}
           >
