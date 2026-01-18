@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { CreditCard, Clock, XCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { CreditCard, Clock, Trophy } from "lucide-react";
 import { CustomPaymentModal } from "./CustomPaymentModal";
 import { useContestPhase } from "@/hooks/useContestPhase";
+import { supabase } from "@/integrations/supabase/client";
 
 interface VoteSectionProps {
   contestantId: string;
@@ -11,7 +12,33 @@ interface VoteSectionProps {
 
 export function VoteSection({ contestantId, contestantName, onVoteSuccess }: VoteSectionProps) {
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [position, setPosition] = useState<number | null>(null);
   const { canVote, voteBlockedReason, phase, formattedStartDate } = useContestPhase();
+
+  // Fetch position when contest has ended
+  useEffect(() => {
+    if (phase === "ended") {
+      fetchPosition();
+    }
+  }, [phase, contestantId]);
+
+  const fetchPosition = async () => {
+    const { data: allContestants } = await supabase
+      .from("contestants")
+      .select("id, votes")
+      .order("votes", { ascending: false });
+
+    if (allContestants) {
+      const pos = allContestants.findIndex((c) => c.id === contestantId) + 1;
+      setPosition(pos);
+    }
+  };
+
+  const getOrdinalSuffix = (n: number): string => {
+    const s = ["th", "st", "nd", "rd"];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  };
 
   // Show different states based on contest phase
   if (phase === "before") {
@@ -40,12 +67,12 @@ export function VoteSection({ contestantId, contestantName, onVoteSuccess }: Vot
     return (
       <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4 shadow-sm">
         <h3 className="font-semibold mb-3 text-white">Vote for {contestantName}</h3>
-        <div className="flex items-center gap-2 text-red-400 mb-3">
-          <XCircle className="w-5 h-5" />
-          <span className="text-sm">Contest has ended</span>
+        <div className="flex items-center gap-2 text-yellow-300 mb-3">
+          <Trophy className="w-5 h-5" />
+          <span className="text-sm">Contest Results</span>
         </div>
-        <p className="text-white/70 text-sm mb-4">
-          Thank you for participating! Winners will be announced soon.
+        <p className="text-white text-lg font-medium mb-4">
+          Thank you for participating! {position ? `You came ${getOrdinalSuffix(position)}.` : "Loading position..."}
         </p>
         <button
           disabled
