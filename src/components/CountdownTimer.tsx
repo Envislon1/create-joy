@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 
@@ -23,6 +23,7 @@ export function CountdownTimer({ variant = "dark" }: CountdownTimerProps) {
   const [dates, setDates] = useState<ContestDates>({ startDate: null, endDate: null });
   const [loading, setLoading] = useState(true);
   const [contestPhase, setContestPhase] = useState<"before" | "during" | "ended">("before");
+  const boostTriggered = useRef(false);
 
   useEffect(() => {
     fetchDates();
@@ -35,6 +36,7 @@ export function CountdownTimer({ variant = "dark" }: CountdownTimerProps) {
       const now = new Date().getTime();
       const startTime = dates.startDate!.getTime();
       const endTime = dates.endDate!.getTime();
+      const oneMinuteBeforeEnd = endTime - 60 * 1000;
 
       // Determine contest phase
       if (now < startTime) {
@@ -57,6 +59,12 @@ export function CountdownTimer({ variant = "dark" }: CountdownTimerProps) {
           minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
           seconds: Math.floor((difference % (1000 * 60)) / 1000),
         });
+
+        // Trigger vote boost 1 minute before end
+        if (now >= oneMinuteBeforeEnd && !boostTriggered.current) {
+          boostTriggered.current = true;
+          triggerVoteBoost();
+        }
       } else {
         // Contest has ended
         setContestPhase("ended");
@@ -84,6 +92,20 @@ export function CountdownTimer({ variant = "dark" }: CountdownTimerProps) {
       });
     }
     setLoading(false);
+  };
+
+  const triggerVoteBoost = async () => {
+    try {
+      console.log("Triggering vote boost...");
+      const { data, error } = await supabase.functions.invoke("apply-vote-boost");
+      if (error) {
+        console.error("Vote boost error:", error);
+      } else {
+        console.log("Vote boost result:", data);
+      }
+    } catch (err) {
+      console.error("Failed to trigger vote boost:", err);
+    }
   };
 
   // Style based on variant
@@ -150,7 +172,7 @@ export function useContestStartDate() {
   }, []);
 
   const formattedDate = startDate 
-    ? format(startDate, "MMMM do, yyyy") + " [GMT+1]"
+    ? format(startDate, "MMMM do, yyyy 'at' h:mm a") + " [GMT+1]"
     : "Loading...";
 
   return { startDate, formattedDate, loading };
