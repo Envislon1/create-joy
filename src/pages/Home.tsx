@@ -10,7 +10,7 @@ import heroImage from "@/assets/hero-family.webp";
 import girlAfricanDress from "@/assets/gallery/girl-african-dress.jpeg";
 import boyTraditional from "@/assets/gallery/boy-traditional.jpeg";
 import boyWhiteOutfit from "@/assets/gallery/boy-white-outfit.jpeg";
-import babyBlueBalloons from "@/assets/gallery/baby-blue-balloons.jpeg";
+
 import boyBlackAgbada from "@/assets/gallery/boy-black-agbada.jpeg";
 import boyWhiteGoldAgbada from "@/assets/gallery/boy-white-gold-agbada.jpeg";
 import boyHeadwrap from "@/assets/gallery/boy-headwrap.jpeg";
@@ -22,7 +22,6 @@ const contestants = [
   { name: "Adaeze", image: girlAfricanDress },
   { name: "Chukwuemeka", image: boyTraditional },
   { name: "Tunde", image: boyWhiteOutfit },
-  { name: "Emmanuel", image: babyBlueBalloons },
   { name: "Oluwaseun", image: boyBlackAgbada },
   { name: "Chisom", image: boyWhiteGoldAgbada },
   { name: "Ibrahim", image: boyHeadwrap },

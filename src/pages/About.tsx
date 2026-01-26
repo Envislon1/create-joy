@@ -16,7 +16,6 @@ import smilingToddler from "@/assets/gallery/smiling-toddler.jpeg";
 const galleryImages = [
   { src: girlAfricanDress, alt: "Beautiful girl in African print dress" },
   { src: boyTraditional, alt: "Boy in traditional African outfit" },
-  { src: babyBlueBalloons, alt: "Adorable baby with balloons" },
   { src: boyWhiteOutfit, alt: "Stylish boy in white outfit" },
   { src: smilingToddler, alt: "Happy smiling toddler" },
   { src: happyBoyBooks, alt: "Excited boy with books" },
