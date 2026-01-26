@@ -158,7 +158,7 @@ const Home = () => {
             Little Stars Kiddies
           </h1>
           <p className="text-lg md:text-xl text-white/90 drop-shadow-md max-w-2xl">
-            Celebrating the brilliance of children across Nigeria! Register your child and let them shine.
+            Celebrating the brilliance of children across Nigeria!
           </p>
         </div>
       </section>
