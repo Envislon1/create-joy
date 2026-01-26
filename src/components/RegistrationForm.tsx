@@ -69,31 +69,31 @@ export function RegistrationForm({ onSuccess }: RegistrationFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
-      <h2 className="text-xl font-semibold mb-4">Register Your Child</h2>
+      <h2 className="text-xl font-semibold mb-4 text-white">Register Your Child</h2>
       
       <div>
-        <label className="block text-sm mb-1">Full Name *</label>
+        <label className="block text-sm mb-1 text-white/90">Full Name *</label>
         <input
           type="text"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
-          className="w-full border border-border p-2 rounded"
+          className="w-full border border-white/30 p-2 rounded bg-white/10 text-white placeholder:text-white/50"
           required
         />
       </div>
 
       <div>
-        <label className="block text-sm mb-1">Age *</label>
+        <label className="block text-sm mb-1 text-white/90">Age *</label>
         <select
           value={age}
           onChange={(e) => setAge(e.target.value)}
-          className="w-full border border-border p-2 rounded"
+          className="w-full border border-white/30 p-2 rounded bg-white/10 text-white"
           required
         >
-          <option value="">Select Age</option>
-          <option value="0">Under 1</option>
+          <option value="" className="bg-section-blue text-white">Select Age</option>
+          <option value="0" className="bg-section-blue text-white">Under 1</option>
           {Array.from({ length: 9 }, (_, i) => i + 1).map((year) => (
-            <option key={year} value={year.toString()}>
+            <option key={year} value={year.toString()} className="bg-section-blue text-white">
               {year} year{year !== 1 ? 's' : ''} old
             </option>
           ))}
@@ -101,44 +101,44 @@ export function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       </div>
 
       <div>
-        <label className="block text-sm mb-1">Sex *</label>
+        <label className="block text-sm mb-1 text-white/90">Sex *</label>
         <select
           value={sex}
           onChange={(e) => setSex(e.target.value)}
-          className="w-full border border-border p-2 rounded"
+          className="w-full border border-white/30 p-2 rounded bg-white/10 text-white"
           required
         >
-          <option value="">Select</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
+          <option value="" className="bg-section-blue text-white">Select</option>
+          <option value="male" className="bg-section-blue text-white">Male</option>
+          <option value="female" className="bg-section-blue text-white">Female</option>
         </select>
       </div>
 
       <div>
-        <label className="block text-sm mb-1">WhatsApp Contact</label>
+        <label className="block text-sm mb-1 text-white/90">WhatsApp Contact</label>
         <input
           type="tel"
           value={whatsappContact}
           onChange={(e) => setWhatsappContact(e.target.value)}
           placeholder="e.g. 08012345678"
-          className="w-full border border-border p-2 rounded"
+          className="w-full border border-white/30 p-2 rounded bg-white/10 text-white placeholder:text-white/50"
         />
       </div>
 
       <div>
-        <label className="block text-sm mb-1">Photo</label>
+        <label className="block text-sm mb-1 text-white/90">Photo</label>
         <input
           type="file"
           accept="image/*"
           onChange={(e) => setPhoto(e.target.files?.[0] || null)}
-          className="w-full border border-border p-2 rounded"
+          className="w-full border border-white/30 p-2 rounded bg-white/10 text-white file:bg-white file:text-section-blue file:border-0 file:rounded file:mr-2"
         />
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-primary text-primary-foreground p-2 rounded disabled:opacity-50"
+        className="w-full bg-white text-section-blue p-2 rounded font-medium disabled:opacity-50 hover:bg-gray-100 transition"
       >
         {loading ? "Registering..." : "Register"}
       </button>

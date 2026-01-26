@@ -64,16 +64,16 @@ const About = () => {
       </section>
 
       {/* Star Gallery Section */}
-      <section className="py-12 px-4 bg-background">
+      <section className="py-12 px-4 bg-section-blue">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-white">
             Our Little Stars Gallery
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {galleryImages.map((image, index) => (
               <div
                 key={index}
-                className="aspect-square overflow-hidden rounded-xl shadow-lg group"
+                className="aspect-square overflow-hidden rounded-xl shadow-lg group bg-white/10"
               >
                 <img
                   src={image.src}
@@ -123,24 +123,24 @@ const About = () => {
       </section>
 
       {/* Our Mission Section */}
-      <section className="py-16 px-4 bg-background">
+      <section className="py-16 px-4 bg-section-blue">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-white">
             Showcasing the Adorable
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-card rounded-xl p-6 shadow-md border border-border">
-              <Star className="w-10 h-10 text-primary mb-4" />
-              <h3 className="text-xl font-bold mb-3">Our Purpose</h3>
-              <p className="text-muted-foreground">
+            <div className="bg-white/10 backdrop-blur rounded-xl p-6 shadow-md border border-white/20">
+              <Star className="w-10 h-10 text-white mb-4" />
+              <h3 className="text-xl font-bold mb-3 text-white">Our Purpose</h3>
+              <p className="text-white/85">
                 Little Stars Kiddies exists to showcase your adorable little one on the grandest stage of them all. 
                 We celebrate the beauty, innocence, and charm that every child naturally possesses.
               </p>
             </div>
-            <div className="bg-card rounded-xl p-6 shadow-md border border-border">
-              <Heart className="w-10 h-10 text-primary mb-4" />
-              <h3 className="text-xl font-bold mb-3">What We Believe</h3>
-              <p className="text-muted-foreground">
+            <div className="bg-white/10 backdrop-blur rounded-xl p-6 shadow-md border border-white/20">
+              <Heart className="w-10 h-10 text-white mb-4" />
+              <h3 className="text-xl font-bold mb-3 text-white">What We Believe</h3>
+              <p className="text-white/85">
                 At Little Stars, we believe children are the rarest of treasures and deserve to be treated as such. 
                 Your child is too precious to remain hidden—our goal is to display their cuteness to the world.
               </p>
@@ -150,16 +150,16 @@ const About = () => {
       </section>
 
       {/* Activity Gallery Section */}
-      <section className="py-12 px-4 bg-muted/30">
+      <section className="py-12 px-4 bg-section-blue">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-white">
             Every Moment is Precious
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {activityImages.map((image, index) => (
               <div
                 key={index}
-                className="aspect-[4/3] overflow-hidden rounded-xl shadow-lg group"
+                className="aspect-[4/3] overflow-hidden rounded-xl shadow-lg group bg-white/10"
               >
                 <img
                   src={image.src}
@@ -202,13 +202,13 @@ const About = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-16 px-4 bg-background">
+      <section className="py-16 px-4 bg-section-blue">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-white">
             What's In It For You?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-section-blue text-white rounded-xl p-6 text-center">
+            <div className="bg-white/10 backdrop-blur text-white rounded-xl p-6 text-center border border-white/20">
               <Trophy className="w-12 h-12 mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-3">Become the Face of Little Stars</h3>
               <p className="text-white/85">
@@ -216,7 +216,7 @@ const About = () => {
                 amazing endorsement opportunities and exclusive deals.
               </p>
             </div>
-            <div className="bg-section-blue text-white rounded-xl p-6 text-center">
+            <div className="bg-white/10 backdrop-blur text-white rounded-xl p-6 text-center border border-white/20">
               <Star className="w-12 h-12 mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-3">Win Exciting Cash Prizes</h3>
               <p className="text-white/85">
@@ -224,7 +224,7 @@ const About = () => {
                 with generous rewards for runners-up too!
               </p>
             </div>
-            <div className="bg-section-blue text-white rounded-xl p-6 text-center">
+            <div className="bg-white/10 backdrop-blur text-white rounded-xl p-6 text-center border border-white/20">
               <Users className="w-12 h-12 mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-3">Build Your Child's Portfolio</h3>
               <p className="text-white/85">
@@ -232,7 +232,7 @@ const About = () => {
                 professional team. Your child's star journey begins here!
               </p>
             </div>
-            <div className="bg-section-blue text-white rounded-xl p-6 text-center">
+            <div className="bg-white/10 backdrop-blur text-white rounded-xl p-6 text-center border border-white/20">
               <Heart className="w-12 h-12 mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-3">Create Lasting Memories</h3>
               <p className="text-white/85">
