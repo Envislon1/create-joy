@@ -164,20 +164,20 @@ const Home = () => {
       </section>
 
       {/* Countdown & Actions */}
-      <section className="py-12 px-4 bg-background">
+      <section className="py-12 px-4 bg-section-blue">
         <div className="max-w-3xl mx-auto text-center">
-          <CountdownTimer variant="light" />
+          <CountdownTimer variant="dark" />
 
           <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
             <Link
               to="/register"
-              className="bg-primary text-primary-foreground px-6 py-3 rounded font-medium hover:opacity-90 transition"
+              className="bg-white text-section-blue px-6 py-3 rounded font-medium hover:bg-gray-100 transition"
             >
               Register Your Child
             </Link>
             <Link
               to="/leaderboard"
-              className="border border-border px-6 py-3 rounded font-medium hover:bg-muted transition"
+              className="border border-white/30 text-white px-6 py-3 rounded font-medium hover:bg-white/10 transition"
             >
               View Leaderboard
             </Link>
@@ -222,19 +222,19 @@ const Home = () => {
       </section>
 
       {/* Fun Section */}
-      <section className="py-16 px-4 bg-background">
+      <section className="py-16 px-4 bg-section-blue">
         <div className="max-w-3xl mx-auto text-left">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-left">Join the Fun!</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-left text-white">Join the Fun!</h2>
           <div className="space-y-4 text-lg leading-relaxed">
-            <p className="text-foreground">
+            <p className="text-white/90">
               Little Stars Kiddies is more than just a competition; it's a celebration of every child's unique sparkle! 
               Watch your little one shine as they gather votes from family, friends, and supporters across Nigeria.
             </p>
-            <p className="text-foreground">
+            <p className="text-white/90">
               Every vote is a cheer, every share spreads the joy, and every participant is already a winner in our hearts. 
               This is your chance to create unforgettable memories and show the world just how special your child is.
             </p>
-            <p className="font-semibold text-foreground">
+            <p className="font-semibold text-white">
               Ready to let your little star shine? Register today and let the fun begin! ✨
             </p>
           </div>
@@ -316,38 +316,38 @@ const Home = () => {
         </div>
       </section>
 
-      {/* How It Works - White */}
-      <section className="py-12 px-4 bg-background">
+      {/* How It Works */}
+      <section className="py-12 px-4 bg-section-blue">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-8">How It Works</h2>
+          <h2 className="text-2xl font-bold text-center mb-8 text-white">How It Works</h2>
           <div className="space-y-4">
             <div className="flex gap-4">
-              <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 font-bold">
+              <div className="w-8 h-8 rounded-full bg-white text-section-blue flex items-center justify-center flex-shrink-0 font-bold">
                 1
               </div>
-              <p className="text-muted-foreground">Register your child with their details and photo.</p>
+              <p className="text-white/85">Register your child with their details and photo.</p>
             </div>
             <div className="flex gap-4">
-              <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 font-bold">
+              <div className="w-8 h-8 rounded-full bg-white text-section-blue flex items-center justify-center flex-shrink-0 font-bold">
                 2
               </div>
-              <p className="text-muted-foreground">Get a unique link for your child's profile - copy and keep this safe!</p>
+              <p className="text-white/85">Get a unique link for your child's profile - copy and keep this safe!</p>
             </div>
             <div className="flex gap-4">
-              <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 font-bold">
+              <div className="w-8 h-8 rounded-full bg-white text-section-blue flex items-center justify-center flex-shrink-0 font-bold">
                 3
               </div>
-              <p className="text-muted-foreground">Share the link with family and friends to vote.</p>
+              <p className="text-white/85">Share the link with family and friends to vote.</p>
             </div>
             <div className="flex gap-4">
-              <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 font-bold">
+              <div className="w-8 h-8 rounded-full bg-white text-section-blue flex items-center justify-center flex-shrink-0 font-bold">
                 4
               </div>
-              <p className="text-muted-foreground">Each vote costs ₦50. Multiple votes allowed!</p>
+              <p className="text-white/85">Each vote costs ₦50. Multiple votes allowed!</p>
             </div>
           </div>
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            💡 <span className="text-yellow-500 font-semibold">Click on a contestant name</span> on the leaderboard to vote for them!
+          <p className="mt-6 text-center text-sm text-white/80">
+            💡 <span className="text-yellow-300 font-semibold">Click on a contestant name</span> on the leaderboard to vote for them!
           </p>
         </div>
       </section>

@@ -22,19 +22,19 @@ const prizes: Record<number, string> = {
 
 const LeaderboardSkeleton = () => (
   <div className="max-w-2xl mx-auto px-4">
-    <Skeleton className="h-7 w-32 mb-4" />
-    <div className="border border-border rounded overflow-hidden">
-      <div className="bg-muted p-2 sm:p-3 flex gap-4">
-        <Skeleton className="h-5 w-12" />
-        <Skeleton className="h-5 flex-1" />
-        <Skeleton className="h-5 w-16" />
+    <Skeleton className="h-7 w-32 mb-4 bg-white/20" />
+    <div className="border border-white/30 rounded overflow-hidden">
+      <div className="bg-white/10 p-2 sm:p-3 flex gap-4">
+        <Skeleton className="h-5 w-12 bg-white/20" />
+        <Skeleton className="h-5 flex-1 bg-white/20" />
+        <Skeleton className="h-5 w-16 bg-white/20" />
       </div>
       {[...Array(5)].map((_, i) => (
-        <div key={i} className="border-t border-border p-2 sm:p-3 flex items-center gap-4">
-          <Skeleton className="h-5 w-8" />
-          <Skeleton className="h-8 w-8 rounded-full" />
-          <Skeleton className="h-5 flex-1" />
-          <Skeleton className="h-5 w-12" />
+        <div key={i} className="border-t border-white/20 p-2 sm:p-3 flex items-center gap-4">
+          <Skeleton className="h-5 w-8 bg-white/20" />
+          <Skeleton className="h-8 w-8 rounded-full bg-white/20" />
+          <Skeleton className="h-5 flex-1 bg-white/20" />
+          <Skeleton className="h-5 w-12 bg-white/20" />
         </div>
       ))}
     </div>
@@ -98,7 +98,7 @@ export function Leaderboard() {
   }
 
   if (contestants.length === 0) {
-    return <p className="text-center py-8 text-muted-foreground">No contestants yet. Be the first to register!</p>;
+    return <p className="text-center py-8 text-white/70">No contestants yet. Be the first to register!</p>;
   }
 
   return (

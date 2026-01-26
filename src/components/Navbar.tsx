@@ -17,7 +17,7 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 bg-background border-b border-border">
+    <nav className="sticky top-0 z-50 bg-section-blue border-b border-white/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
           <Link to="/" className="flex items-center">
@@ -36,10 +36,10 @@ export function Navbar() {
                 key={link.to}
                 to={link.to}
                 className={cn(
-                  "px-3 py-2 rounded text-sm font-medium transition",
+                  "px-3 py-2 rounded text-sm font-medium transition text-white",
                   location.pathname === link.to
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-muted"
+                    ? "bg-white/20"
+                    : "hover:bg-white/10"
                 )}
               >
                 {link.label}
@@ -49,7 +49,7 @@ export function Navbar() {
 
           {/* Mobile Hamburger Button */}
           <button
-            className="md:hidden flex items-center justify-center w-10 h-10 rounded bg-primary text-primary-foreground"
+            className="md:hidden flex items-center justify-center w-10 h-10 rounded bg-white/20 text-white"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -69,7 +69,7 @@ export function Navbar() {
       {/* Mobile Slide-out Menu */}
       <div
         className={cn(
-          "fixed top-0 right-0 h-full w-64 bg-primary z-50 transform transition-transform duration-300 ease-in-out md:hidden",
+          "fixed top-0 right-0 h-full w-64 bg-section-blue z-50 transform transition-transform duration-300 ease-in-out md:hidden",
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
