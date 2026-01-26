@@ -346,6 +346,9 @@ const Home = () => {
               <p className="text-muted-foreground">Each vote costs ₦50. Multiple votes allowed!</p>
             </div>
           </div>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            💡 <span className="text-yellow-500 font-semibold">Click on a contestant name</span> on the leaderboard to vote for them!
+          </p>
         </div>
       </section>
 
