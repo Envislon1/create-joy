@@ -10,7 +10,7 @@ import heroImage from "@/assets/hero-family.webp";
 import girlAfricanDress from "@/assets/gallery/girl-african-dress.jpeg";
 import boyTraditional from "@/assets/gallery/boy-traditional.jpeg";
 import boyWhiteOutfit from "@/assets/gallery/boy-white-outfit.jpeg";
-
+import babyBlueBalloons from "@/assets/gallery/baby-blue-balloons.jpeg";
 import boyBlackAgbada from "@/assets/gallery/boy-black-agbada.jpeg";
 import boyWhiteGoldAgbada from "@/assets/gallery/boy-white-gold-agbada.jpeg";
 import boyHeadwrap from "@/assets/gallery/boy-headwrap.jpeg";
@@ -22,6 +22,7 @@ const contestants = [
   { name: "Adaeze", image: girlAfricanDress },
   { name: "Chukwuemeka", image: boyTraditional },
   { name: "Tunde", image: boyWhiteOutfit },
+  { name: "Emmanuel", image: babyBlueBalloons },
   { name: "Oluwaseun", image: boyBlackAgbada },
   { name: "Chisom", image: boyWhiteGoldAgbada },
   { name: "Ibrahim", image: boyHeadwrap },
@@ -226,7 +227,7 @@ const Home = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-left">Join the Fun!</h2>
           <div className="space-y-4 text-lg leading-relaxed">
             <p className="text-foreground">
-              Little Stars Kiddies is more than just a competition—it's a celebration of every child's unique sparkle! 
+              Little Stars Kiddies is more than just a competition; it's a celebration of every child's unique sparkle! 
               Watch your little one shine as they gather votes from family, friends, and supporters across Nigeria.
             </p>
             <p className="text-foreground">
@@ -304,7 +305,7 @@ const Home = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-8 text-left">Steps to Win</h2>
           <div className="space-y-4 text-lg leading-relaxed">
             <p>
-              Gather support from your loved ones—friends, family, and well-wishers—and encourage them to vote for your child. 
+              Gather support from your loved ones friends, family, and well-wishers and encourage them to vote for your child. 
               Each vote costs just ₦50, and there's no limit to how many votes you can collect!
             </p>
             <p>

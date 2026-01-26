@@ -8,7 +8,7 @@ const LeaderboardPage = () => {
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-3xl font-bold mb-2">Leaderboard</h1>
           <p className="text-white/80">
-            See who's leading the contest. <span className="text-yellow-300 font-semibold">Click on a contestant name</span> to vote for them!
+            See who's leading the contest. <span className="text-yellow-300 font-semibold">Click on a contestant name to vote for them!</span>
           </p>
         </div>
       </div>
