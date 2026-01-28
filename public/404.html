@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Little Stars Kiddies</title>
+    <script>
+      // Single Page App redirect for GitHub Pages
+      // Redirects all 404 requests to index.html preserving the path
+      const path = window.location.pathname;
+      const search = window.location.search;
+      const hash = window.location.hash;
+      // Redirect to the root with hash-based routing
+      window.location.replace(
+        window.location.origin + 
+        window.location.pathname.split('/').slice(0, -1).join('/') + 
+        '/#' + path.split('/').pop() + search + hash
+      );
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <meta http-equiv="refresh" content="0;url=/" />
+    </noscript>
+  </body>
+</html>
