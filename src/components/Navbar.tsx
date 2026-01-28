@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
-import logoNew from "@/assets/logo-new.webp";
+import logoBaby from "@/assets/logo-baby.png";
 
 export function Navbar() {
   const location = useLocation();
@@ -22,7 +22,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-14">
           <Link to="/" className="flex items-center">
             <img 
-              src={logoNew} 
+              src={logoBaby} 
               alt="Little Stars Kiddies" 
               className="h-12 w-auto interactive"
               loading="eager"
