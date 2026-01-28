@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -12,8 +9,6 @@ interface EditProfileModalProps {
   contestant: {
     id: string;
     full_name: string;
-    age: number;
-    sex: string;
     photo_url: string | null;
   };
   onUpdate: () => void;
@@ -22,9 +17,6 @@ interface EditProfileModalProps {
 export function EditProfileModal({ contestant, onUpdate }: EditProfileModalProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [fullName, setFullName] = useState(contestant.full_name);
-  const [age, setAge] = useState(contestant.age.toString());
-  const [sex, setSex] = useState(contestant.sex);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(contestant.photo_url);
 
@@ -38,52 +30,53 @@ export function EditProfileModal({ contestant, onUpdate }: EditProfileModalProps
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!photoFile) {
+      toast({
+        title: "No photo selected",
+        description: "Please select a new photo to upload.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setLoading(true);
 
     try {
-      let photoUrl = contestant.photo_url;
+      const fileExt = photoFile.name.split('.').pop();
+      const fileName = `${contestant.id}-${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('contestant-photos')
+        .upload(fileName, photoFile, { upsert: true });
 
-      // Upload new photo if selected
-      if (photoFile) {
-        const fileExt = photoFile.name.split('.').pop();
-        const fileName = `${contestant.id}-${Date.now()}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('contestant-photos')
-          .upload(fileName, photoFile, { upsert: true });
-
-        if (uploadError) {
-          throw new Error("Failed to upload photo");
-        }
-
-        const { data: urlData } = supabase.storage
-          .from('contestant-photos')
-          .getPublicUrl(fileName);
-        
-        photoUrl = urlData.publicUrl;
+      if (uploadError) {
+        throw new Error("Failed to upload photo");
       }
 
-      // Update contestant record
+      const { data: urlData } = supabase.storage
+        .from('contestant-photos')
+        .getPublicUrl(fileName);
+      
+      const photoUrl = urlData.publicUrl;
+
+      // Update only the photo_url
       const { error: updateError } = await supabase
         .from("contestants")
-        .update({
-          full_name: fullName.trim(),
-          age: parseInt(age),
-          sex,
-          photo_url: photoUrl,
-        })
+        .update({ photo_url: photoUrl })
         .eq("id", contestant.id);
 
       if (updateError) {
-        throw new Error("Failed to update profile");
+        throw new Error("Failed to update photo");
       }
 
       toast({
-        title: "Profile Updated",
-        description: "Your changes have been saved successfully.",
+        title: "Photo Updated",
+        description: "Your photo has been updated successfully.",
       });
       
       setOpen(false);
+      setPhotoFile(null);
       onUpdate();
     } catch (error: any) {
       toast({
@@ -101,14 +94,14 @@ export function EditProfileModal({ contestant, onUpdate }: EditProfileModalProps
       <DialogTrigger asChild>
         <button
           className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors border-2 border-section-blue"
-          aria-label="Edit profile"
+          aria-label="Edit photo"
         >
           <Pencil className="w-4 h-4 text-section-blue" />
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md bg-section-blue border-white/20 text-white">
         <DialogHeader>
-          <DialogTitle className="text-white">Edit Profile</DialogTitle>
+          <DialogTitle className="text-white">Update Photo</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Photo Preview */}
@@ -118,10 +111,10 @@ export function EditProfileModal({ contestant, onUpdate }: EditProfileModalProps
                 <img
                   src={previewUrl}
                   alt="Profile preview"
-                  className="w-24 h-24 rounded-full object-cover border-2 border-white/50"
+                  className="w-32 h-32 rounded-full object-cover border-2 border-white/50"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center text-3xl border-2 border-white/50">
+                <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-4xl border-2 border-white/50">
                   👶
                 </div>
               )}
@@ -136,55 +129,14 @@ export function EditProfileModal({ contestant, onUpdate }: EditProfileModalProps
               />
             </label>
           </div>
-          <p className="text-center text-sm text-white/70">Click photo to change</p>
-
-          {/* Full Name */}
-          <div className="space-y-2">
-            <Label htmlFor="fullName" className="text-white">Full Name</Label>
-            <Input
-              id="fullName"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="bg-white/10 border-white/30 text-white placeholder:text-white/50"
-              required
-            />
-          </div>
-
-          {/* Age */}
-          <div className="space-y-2">
-            <Label htmlFor="age" className="text-white">Age (years)</Label>
-            <Input
-              id="age"
-              type="number"
-              min="0"
-              max="12"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              className="bg-white/10 border-white/30 text-white placeholder:text-white/50"
-              required
-            />
-          </div>
-
-          {/* Gender */}
-          <div className="space-y-2">
-            <Label className="text-white">Gender</Label>
-            <Select value={sex} onValueChange={setSex}>
-              <SelectTrigger className="bg-white/10 border-white/30 text-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="male">Boy</SelectItem>
-                <SelectItem value="female">Girl</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <p className="text-center text-sm text-white/70">Click photo to select a new one</p>
 
           <Button
             type="submit"
-            disabled={loading}
-            className="w-full bg-white text-section-blue hover:bg-gray-100"
+            disabled={loading || !photoFile}
+            className="w-full bg-white text-section-blue hover:bg-gray-100 disabled:opacity-50"
           >
-            {loading ? "Saving..." : "Save Changes"}
+            {loading ? "Uploading..." : "Update Photo"}
           </Button>
         </form>
       </DialogContent>
