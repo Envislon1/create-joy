@@ -4,17 +4,19 @@
   "version": "0.0.0",
   "type": "module",
   "homepage": "https://envislon1.github.io/create-magic",
+
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
-    "build:dev": "vite build --mode development",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest"
-  },
+  "dev": "vite",
+  "build": "vite build",
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d dist",
+  "build:dev": "vite build --mode development",
+  "lint": "eslint .",
+  "preview": "vite preview",
+  "test": "vitest run",
+  "test:watch": "vitest"
+},
+
   "dependencies": {
     "@fontsource/great-vibes": "^5.2.8",
     "@fontsource/pacifico": "^5.2.7",
