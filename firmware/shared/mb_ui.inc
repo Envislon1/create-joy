@@ -1278,7 +1278,9 @@ void goTo(Page p) {
     case Page::Meds:      if (!p_meds)    { build_meds();     disable_shadows(p_meds); }    target = p_meds;    refresh_meds(); break;
     case Page::Music:     if (!p_music)   { build_music();    disable_shadows(p_music); }   target = p_music;   refresh_music(); break;
     case Page::Dial:      if (!p_dial)    { build_dial();     disable_shadows(p_dial); }    target = p_dial;    dial_refresh(); break;
-    case Page::Calling:   if (!p_calling) { build_calling();  disable_shadows(p_calling); } target = p_calling; break;
+    // refresh_home() is what fills call_num_lbl; without it the calling page
+    // showed an empty line because app_state never fired a change event.
+    case Page::Calling:   if (!p_calling) { build_calling();  disable_shadows(p_calling); } target = p_calling; refresh_home(); break;
     case Page::Sms:       if (!p_sms)     { build_sms();      disable_shadows(p_sms); }     target = p_sms;     refresh_sms(); break;
     case Page::Settings:  if (!p_set)     { build_settings(); disable_shadows(p_set); }     target = p_set;     break;
   }
