@@ -197,7 +197,11 @@ static void mb_anim_attach(lv_obj_t* img, const char* bg_asset) {
   (void)t;
 }
 
-/** Full-screen page container, optionally wallpapered from the SD card. */
+/** True when the page built most recently actually got its SD wallpaper.
+ *  The artwork already contains a drawn back arrow, so the firmware must NOT
+ *  paint icons/back.bin on top of it — that is what produced two arrows. */
+static bool s_page_has_bg = false;
+
 static lv_obj_t* page_create(const char* bg_asset, uint32_t fallback_bg) {
   lv_obj_t* p = lv_obj_create(lv_screen_active());
   lv_obj_remove_style_all(p);
