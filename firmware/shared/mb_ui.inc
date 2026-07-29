@@ -641,7 +641,7 @@ static void pick_mode(const char* m) {
 static void build_home2() {
   p_home2 = page_create("home2.bin", 0x0d1512);
 
-  icon_create(p_home2, "icons/back.bin", SX(10), 8);
+  back_icon(p_home2, SX(10), 8);
   touch_region(p_home2, SX(6), 4, SX(62), 46, "BACK", [](lv_event_t*) {
     ui::goTo(ui::Page::Home);
   }, nullptr);
@@ -701,7 +701,7 @@ static void build_home2() {
 static void build_chat() {
   p_chat = page_create("ai.bin", 0x0d1512);
 
-  icon_create(p_chat, "icons/back.bin", SX(8), 8);
+  back_icon(p_chat, SX(8), 8);
   touch_region(p_chat, SX(4), 4, SX(64), 48, "BACK", [](lv_event_t*) {
     ui::back();
   }, nullptr);
@@ -737,7 +737,7 @@ static void build_chat() {
 static void build_meds() {
   p_meds = page_create(nullptr, 0x0d1512);
 
-  icon_create(p_meds, "icons/back.bin", SX(8), 8);
+  back_icon(p_meds, SX(8), 8);
   touch_region(p_meds, SX(4), 4, SX(64), 48, "BACK", [](lv_event_t*) {
     ui::back();
   }, nullptr);
@@ -793,7 +793,7 @@ static void refresh_meds() {
 static void build_music() {
   p_music = page_create("music.bin", 0x0d1512);
 
-  icon_create(p_music, "icons/back.bin", SX(8), 8);
+  back_icon(p_music, SX(8), 8);
   touch_region(p_music, SX(4), 4, SX(64), 48, "BACK", [](lv_event_t*) {
     ui::back();
   }, nullptr);
@@ -880,7 +880,7 @@ static void build_dial() {
 
   // Right column: back / save / call.
   const int rightX = 214;
-  icon_create(p_dial, "icons/back.bin", SX(rightX) + 3, 92);
+  back_icon(p_dial, SX(rightX) + 3, 92);
   touch_region(p_dial, SX(rightX), 90, SX(54), 48, "BACK", [](lv_event_t*) {
     ui::back();
   }, nullptr);
@@ -947,7 +947,7 @@ static void build_sms() {
   // reserve the top 52px band for the Back button so nothing overlaps it.
   p_sms = page_create(nullptr, 0x07100c);
 
-  icon_create(p_sms, "icons/back.bin", SX(6), 6);
+  back_icon(p_sms, SX(6), 6);
   touch_region(p_sms, SX(4), 4, SX(44), 44, "BACK", [](lv_event_t*) {
     ui::back();
   }, nullptr);
@@ -1084,7 +1084,7 @@ static void refresh_sms() {
 static void build_settings() {
   p_set = page_create(nullptr, 0x0d1512);
 
-  icon_create(p_set, "icons/back.bin", SX(8), 8);
+  back_icon(p_set, SX(8), 8);
   touch_region(p_set, SX(4), 4, SX(64), 48, "BACK", [](lv_event_t*) { ui::back(); }, nullptr);
 
   lv_obj_t* t = lv_label_create(p_set);
@@ -1127,7 +1127,7 @@ static void build_settings() {
 static void build_language() {
   p_lang = page_create(nullptr, 0x0d1512);
 
-  icon_create(p_lang, "icons/back.bin", SX(8), 8);
+  back_icon(p_lang, SX(8), 8);
   touch_region(p_lang, SX(4), 4, SX(64), 48, "BACK", [](lv_event_t*) { ui::back(); }, nullptr);
 
   lv_obj_t* t = lv_label_create(p_lang);
