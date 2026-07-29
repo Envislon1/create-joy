@@ -197,7 +197,11 @@ static void mb_anim_attach(lv_obj_t* img, const char* bg_asset) {
   (void)t;
 }
 
-/** Full-screen page container, optionally wallpapered from the SD card. */
+/** True when the page built most recently actually got its SD wallpaper.
+ *  The artwork already contains a drawn back arrow, so the firmware must NOT
+ *  paint icons/back.bin on top of it — that is what produced two arrows. */
+static bool s_page_has_bg = false;
+
 static lv_obj_t* page_create(const char* bg_asset, uint32_t fallback_bg) {
   lv_obj_t* p = lv_obj_create(lv_screen_active());
   lv_obj_remove_style_all(p);
@@ -206,6 +210,7 @@ static lv_obj_t* page_create(const char* bg_asset, uint32_t fallback_bg) {
   lv_obj_remove_flag(p, LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_set_style_bg_color(p, lv_color_hex(fallback_bg), 0);
   lv_obj_set_style_bg_opa(p, LV_OPA_COVER, 0);
+  s_page_has_bg = false;
   if (bg_asset && mb_assets::has(bg_asset)) {
     lv_obj_t* img = lv_image_create(p);
     lv_image_set_src(img, mb_assets::path(bg_asset));
@@ -216,6 +221,8 @@ static lv_obj_t* page_create(const char* bg_asset, uint32_t fallback_bg) {
     // instead of silently showing the flat fallback colour.
     if (lv_obj_get_width(img) == 0 || lv_image_get_src(img) == nullptr) {
       Serial.printf("[ui] %s did not decode (check lv_conf cache + .bin header)\n", bg_asset);
+    } else {
+      s_page_has_bg = true;
     }
     mb_anim_attach(img, bg_asset);
   } else if (bg_asset) {
@@ -233,6 +240,19 @@ static lv_obj_t* icon_create(lv_obj_t* parent, const char* asset, int x, int y) 
   lv_obj_set_pos(img, x, y);
   lv_obj_remove_flag(img, LV_OBJ_FLAG_CLICKABLE);
   return img;
+}
+
+/** Back chevron — ONLY drawn when the page has no SD wallpaper. Every piece
+ *  of artwork already includes its own arrow, so drawing ours as well is what
+ *  made the arrow appear twice on music / message / meds / home2 / ... */
+static lv_obj_t* back_icon(lv_obj_t* parent, int x, int y) {
+  if (s_page_has_bg) return nullptr;
+  lv_obj_t* l = lv_label_create(parent);
+  lv_label_set_text(l, LV_SYMBOL_LEFT);
+  lv_obj_set_style_text_color(l, lv_color_hex(0x7fe3b0), 0);
+  lv_obj_set_style_text_font(l, &lv_font_montserrat_20, 0);
+  lv_obj_set_pos(l, x, y);
+  return l;
 }
 
 static void icon_swap(lv_obj_t* img, const char* asset) {
@@ -621,7 +641,7 @@ static void pick_mode(const char* m) {
 static void build_home2() {
   p_home2 = page_create("home2.bin", 0x0d1512);
 
-  icon_create(p_home2, "icons/back.bin", SX(10), 8);
+  back_icon(p_home2, SX(10), 8);
   touch_region(p_home2, SX(6), 4, SX(62), 46, "BACK", [](lv_event_t*) {
     ui::goTo(ui::Page::Home);
   }, nullptr);
@@ -681,7 +701,7 @@ static void build_home2() {
 static void build_chat() {
   p_chat = page_create("ai.bin", 0x0d1512);
 
-  icon_create(p_chat, "icons/back.bin", SX(8), 8);
+  back_icon(p_chat, SX(8), 8);
   touch_region(p_chat, SX(4), 4, SX(64), 48, "BACK", [](lv_event_t*) {
     ui::back();
   }, nullptr);
@@ -717,7 +737,7 @@ static void build_chat() {
 static void build_meds() {
   p_meds = page_create(nullptr, 0x0d1512);
 
-  icon_create(p_meds, "icons/back.bin", SX(8), 8);
+  back_icon(p_meds, SX(8), 8);
   touch_region(p_meds, SX(4), 4, SX(64), 48, "BACK", [](lv_event_t*) {
     ui::back();
   }, nullptr);
@@ -773,7 +793,7 @@ static void refresh_meds() {
 static void build_music() {
   p_music = page_create("music.bin", 0x0d1512);
 
-  icon_create(p_music, "icons/back.bin", SX(8), 8);
+  back_icon(p_music, SX(8), 8);
   touch_region(p_music, SX(4), 4, SX(64), 48, "BACK", [](lv_event_t*) {
     ui::back();
   }, nullptr);
@@ -860,7 +880,7 @@ static void build_dial() {
 
   // Right column: back / save / call.
   const int rightX = 214;
-  icon_create(p_dial, "icons/back.bin", SX(rightX) + 3, 92);
+  back_icon(p_dial, SX(rightX) + 3, 92);
   touch_region(p_dial, SX(rightX), 90, SX(54), 48, "BACK", [](lv_event_t*) {
     ui::back();
   }, nullptr);
@@ -904,7 +924,7 @@ static void build_calling() {
   lv_obj_set_style_text_font(call_num_lbl, &lv_font_montserrat_20, 0);
   lv_obj_set_style_text_align(call_num_lbl, LV_TEXT_ALIGN_CENTER, 0);
   lv_obj_set_width(call_num_lbl, 240);
-  lv_obj_align(call_num_lbl, LV_ALIGN_TOP_MID, 0, 108);
+  lv_obj_align(call_num_lbl, LV_ALIGN_TOP_MID, 0, 124);
 
   touch_region(p_calling, SX(100), 218, SX(82), 82, "HANG UP", [](lv_event_t*) {
 #if MB_HAS_MODEM
@@ -927,7 +947,7 @@ static void build_sms() {
   // reserve the top 52px band for the Back button so nothing overlaps it.
   p_sms = page_create(nullptr, 0x07100c);
 
-  icon_create(p_sms, "icons/back.bin", SX(6), 6);
+  back_icon(p_sms, SX(6), 6);
   touch_region(p_sms, SX(4), 4, SX(44), 44, "BACK", [](lv_event_t*) {
     ui::back();
   }, nullptr);
@@ -1064,7 +1084,7 @@ static void refresh_sms() {
 static void build_settings() {
   p_set = page_create(nullptr, 0x0d1512);
 
-  icon_create(p_set, "icons/back.bin", SX(8), 8);
+  back_icon(p_set, SX(8), 8);
   touch_region(p_set, SX(4), 4, SX(64), 48, "BACK", [](lv_event_t*) { ui::back(); }, nullptr);
 
   lv_obj_t* t = lv_label_create(p_set);
@@ -1107,7 +1127,7 @@ static void build_settings() {
 static void build_language() {
   p_lang = page_create(nullptr, 0x0d1512);
 
-  icon_create(p_lang, "icons/back.bin", SX(8), 8);
+  back_icon(p_lang, SX(8), 8);
   touch_region(p_lang, SX(4), 4, SX(64), 48, "BACK", [](lv_event_t*) { ui::back(); }, nullptr);
 
   lv_obj_t* t = lv_label_create(p_lang);
@@ -1258,7 +1278,9 @@ void goTo(Page p) {
     case Page::Meds:      if (!p_meds)    { build_meds();     disable_shadows(p_meds); }    target = p_meds;    refresh_meds(); break;
     case Page::Music:     if (!p_music)   { build_music();    disable_shadows(p_music); }   target = p_music;   refresh_music(); break;
     case Page::Dial:      if (!p_dial)    { build_dial();     disable_shadows(p_dial); }    target = p_dial;    dial_refresh(); break;
-    case Page::Calling:   if (!p_calling) { build_calling();  disable_shadows(p_calling); } target = p_calling; break;
+    // refresh_home() is what fills call_num_lbl; without it the calling page
+    // showed an empty line because app_state never fired a change event.
+    case Page::Calling:   if (!p_calling) { build_calling();  disable_shadows(p_calling); } target = p_calling; refresh_home(); break;
     case Page::Sms:       if (!p_sms)     { build_sms();      disable_shadows(p_sms); }     target = p_sms;     refresh_sms(); break;
     case Page::Settings:  if (!p_set)     { build_settings(); disable_shadows(p_set); }     target = p_set;     break;
   }
