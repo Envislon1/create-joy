@@ -1142,6 +1142,7 @@ void begin() {
 
   // SD assets are optional: without a card we fall back to the drawn UI.
   mb_assets::begin();
+  mb_assets::dump();
 
   build_splash();
   build_wifi();
