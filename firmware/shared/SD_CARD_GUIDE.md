@@ -143,7 +143,7 @@ Failure modes and what they mean:
 | `[sd] mount FAILED`                           | Wrong CS pin, card not FAT32, 5 V on VCC, or bad/long jumper wires  |
 | `[sd] no card detected`                       | Card not seated, or slot contacts dirty                             |
 | `[sd] /mindbuddy missing`                     | Folder nested one level too deep, or misspelled/capitalised         |
-| Mounts fine but pages are flat colours        | `.bin` files missing or still named `.png` — re-run the converter   |
+| Mounts fine but pages are flat colours        | `.bin` files missing/misnamed, or `LV_CACHE_DEF_SIZE` is 0 in that board's `lv_conf.h` (must be non-zero or LVGL refuses to decode) |
 | Artwork shows but colours are inverted        | Re-run the converter with `--no-swap`                               |
 
 Lower `MB_SD_FREQ` to `10000000` if the card mounts intermittently on long

@@ -55,9 +55,18 @@
 
 /* --- SD-backed LVGL binary images (see firmware/shared/SD_CARD_GUIDE.md) ---
    A custom 'S:' filesystem driver is registered in mb_assets.inc, so the
-   stock stdio/posix drivers stay off. No PSRAM on this board: keep the
-   image cache at zero and stream straight off the card. */
+   stock stdio/posix drivers stay off.
+
+   LV_CACHE_DEF_SIZE MUST NOT be 0: LVGL 9's image decoder registers every
+   opened image in the cache, and with a zero-byte cache lv_cache_add() fails,
+   lv_image_decoder_open() returns INVALID and the image silently never draws
+   (which is exactly the "icons/labels show, artwork doesn't" symptom).
+   32 KB is plenty here because RAM_LOAD stays off — the entries hold only the
+   decoder descriptor, the pixels are streamed off the card row by row. */
 #define LV_USE_FS_STDIO       0
 #define LV_USE_FS_POSIX       0
-#define LV_CACHE_DEF_SIZE     0
+#define LV_CACHE_DEF_SIZE     (32U * 1024U)
+#define LV_IMAGE_HEADER_CACHE_DEF_CNT 16
+/* No PSRAM on this board — a full 240x320 frame (150 KB) would never fit in
+   LV_MEM_SIZE, so keep streaming instead of loading whole images to RAM. */
 #define LV_BIN_DECODER_RAM_LOAD 0

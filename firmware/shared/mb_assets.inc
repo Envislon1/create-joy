@@ -158,7 +158,9 @@ inline bool begin() {
 
   lv_fs_drv_init(&s_drv);
   s_drv.letter   = 'S';
-  s_drv.cache_size = 0;
+  // A small read cache keeps the row-by-row streaming of a 150 KB background
+  // from turning into thousands of 2-byte SPI reads.
+  s_drv.cache_size = 512;
   s_drv.open_cb  = fs_open;
   s_drv.close_cb = fs_close;
   s_drv.read_cb  = fs_read;
@@ -186,6 +188,50 @@ inline bool has(const char* name) {
   char p[64];
   snprintf(p, sizeof(p), "%s/%s", MB_ASSET_DIR, name);
   return SD.exists(p);
+}
+
+/** Boot-time report: what is on the card and whether LVGL can actually read
+ *  it. Run once from ui::begin() so a blank screen can be diagnosed from the
+ *  serial monitor alone. */
+inline void dump() {
+  if (!s_ready) {
+    Serial.println(F("[assets] NOT ready — every page will use the drawn fallback UI"));
+    return;
+  }
+  static const char* kExpect[] = {
+    "splash.bin", "home1.bin", "home2.bin", "ai.bin",
+    "music.bin", "keypad.bin", "calling.bin",
+    "icons/back.bin", "icons/net.bin", "icons/nonet.bin",
+  };
+  Serial.println(F("[assets] card contents:"));
+  for (const char* name : kExpect) {
+    char p[64];
+    snprintf(p, sizeof(p), "%s/%s", MB_ASSET_DIR, name);
+    File f = SD.open(p, FILE_READ);
+    if (!f) { Serial.printf("  %-18s MISSING\n", name); continue; }
+    uint8_t hdr[12] = {0};
+    size_t n = f.read(hdr, sizeof(hdr));
+    uint32_t sz = f.size();
+    f.close();
+    uint16_t w = n >= 12 ? (hdr[4] | (hdr[5] << 8)) : 0;
+    uint16_t h = n >= 12 ? (hdr[6] | (hdr[7] << 8)) : 0;
+    Serial.printf("  %-18s %6lu B  magic=0x%02X cf=0x%02X %ux%u%s\n",
+                  name, (unsigned long)sz, hdr[0], hdr[1], w, h,
+                  (hdr[0] == 0x19) ? "" : "  <-- BAD HEADER (re-run convert_assets.py)");
+  }
+
+  // Prove the LVGL 'S:' driver itself works — this is what lv_image_set_src uses.
+  lv_fs_file_t lf;
+  const char* probe = path("splash.bin");
+  lv_fs_res_t r = lv_fs_open(&lf, probe, LV_FS_MODE_RD);
+  if (r == LV_FS_RES_OK) {
+    uint8_t b[12]; uint32_t br = 0;
+    lv_fs_read(&lf, b, sizeof(b), &br);
+    lv_fs_close(&lf);
+    Serial.printf("[assets] lv_fs OK (%s, read %lu bytes)\n", probe, (unsigned long)br);
+  } else {
+    Serial.printf("[assets] lv_fs FAILED on %s (res=%d)\n", probe, (int)r);
+  }
 }
 
 } // namespace mb_assets

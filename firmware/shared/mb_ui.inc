@@ -147,6 +147,13 @@ static lv_obj_t* page_create(const char* bg_asset, uint32_t fallback_bg) {
     lv_obj_set_pos(img, 0, 0);
     lv_obj_remove_flag(img, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_move_background(img);
+    // If the decoder rejected the file the image object stays 0x0 — report it
+    // instead of silently showing the flat fallback colour.
+    if (lv_obj_get_width(img) == 0 || lv_image_get_src(img) == nullptr) {
+      Serial.printf("[ui] %s did not decode (check lv_conf cache + .bin header)\n", bg_asset);
+    }
+  } else if (bg_asset) {
+    Serial.printf("[ui] %s not on card — flat colour fallback\n", bg_asset);
   }
   return p;
 }
@@ -1142,6 +1149,7 @@ void begin() {
 
   // SD assets are optional: without a card we fall back to the drawn UI.
   mb_assets::begin();
+  mb_assets::dump();
 
   build_splash();
   build_wifi();
