@@ -119,13 +119,35 @@ def composite_frames(img: Image.Image) -> list[Image.Image]:
     return frames
 
 
-def frame_score(frame: Image.Image) -> int:
-    """Rough "how much is on this frame" measure — used to drop blank frames."""
-    small = frame.resize((32, 32), Image.BILINEAR)
-    px = list(small.getdata())
-    lo = min(sum(p) for p in px)
-    hi = max(sum(p) for p in px)
-    return hi - lo
+def _thumb(frame: Image.Image) -> list[int]:
+    return list(frame.convert("L").resize((32, 32), Image.BILINEAR).getdata())
+
+
+def frame_diff(a: Image.Image, b: Image.Image) -> float:
+    """Normalised 0..1 difference between two frames."""
+    ta, tb = _thumb(a), _thumb(b)
+    return sum(abs(x - y) for x, y in zip(ta, tb)) / (len(ta) * 255.0)
+
+
+def settled_frames(frames: list[Image.Image], threshold: float = 0.06) -> list[Image.Image]:
+    """Return the part of the animation that shows the finished screen.
+
+    The MindBuddy artwork is an intro: the icons fly in one by one over a black
+    background before the screen settles into a small looping motion. Frame 0
+    is therefore black (that's why splash showed black and home1/home2 looked
+    blank) and the middle frames are half-built. We keep only the tail whose
+    content matches the final frame, which is the settled, loopable part.
+    """
+    if not frames:
+        return frames
+    last = frames[-1]
+    start = 0
+    for i, f in enumerate(frames):
+        if frame_diff(f, last) > threshold:
+            start = i + 1
+    if start >= len(frames):
+        start = len(frames) - 1
+    return frames[start:]
 
 
 def prepare(frame: Image.Image, size: tuple[int, int] | None) -> Image.Image:
@@ -136,13 +158,8 @@ def prepare(frame: Image.Image, size: tuple[int, int] | None) -> Image.Image:
 
 def convert(src: Path, dst: Path, swap: bool, size: tuple[int, int] | None) -> None:
     img = Image.open(src)
-    if getattr(img, "is_animated", False):
-        # Pick the busiest frame rather than frame 0 — animated artwork often
-        # opens on an empty frame.
-        frames = composite_frames(img)
-        frame = max(frames, key=frame_score)
-    else:
-        frame = img
+    # Animated artwork: use the FINAL frame — that's the fully built screen.
+    frame = composite_frames(img)[-1] if getattr(img, "is_animated", False) else img
     dst.parent.mkdir(parents=True, exist_ok=True)
     dst.write_bytes(to_lvgl_bin(prepare(frame, size), swap))
     print(f"  {src.name:<24} -> {dst.relative_to(dst.parents[1])}  ({dst.stat().st_size / 1024:.0f} KB)")
@@ -153,38 +170,41 @@ def convert_animated(src: Path, dst: Path, swap: bool,
     """Animated GIF -> name.bin, name_f01.bin, name_f02.bin ...
 
     The firmware cycles those frames with a timer (see mb_ui.inc), so no GIF
-    decoder has to be linked into the ESP32 build. Frame 0 keeps the plain
-    name, which means a firmware that ignores animation still shows artwork.
+    decoder has to be linked into the ESP32 build. Frame 0 is the finished
+    screen, so a firmware (or card) without the extra frames still shows the
+    complete artwork instead of a black intro frame.
     """
     img = Image.open(src)
+    stem = dst.stem
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    # Remove stale frames from an earlier run with a different --frames value.
+    for old in dst.parent.glob(f"{stem}_f*.bin"):
+        old.unlink()
+
     if not getattr(img, "is_animated", False) or max_frames <= 1:
         convert(src, dst, swap, size)
         return 1
 
-    frames = composite_frames(img)
-    # Drop the blank lead-in frames so the first thing the panel shows is real
-    # artwork (this is why splash.bin was pure black).
-    best = max(frame_score(f) for f in frames)
-    frames = [f for f in frames if frame_score(f) >= best * 0.35] or frames
+    frames = settled_frames(composite_frames(img))
+    # Final frame first so name.bin is always the complete screen.
+    frames = frames[-1:] + frames[:-1]
 
     total = len(frames)
-    # Even sampling so a 60-frame GIF still fits the SD card / RAM budget.
-    n = min(max_frames, total)
+    n = max(1, min(max_frames, total))
+    # Even sampling so a 150-frame GIF still fits the SD card / RAM budget.
     picks = sorted(dict.fromkeys(
         round(i * (total - 1) / max(n - 1, 1)) for i in range(n)
     ))
-    stem = dst.stem
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    # Remove stale frames from an earlier run with a higher --frames value.
-    for old in dst.parent.glob(f"{stem}_f*.bin"):
-        old.unlink()
     written = 0
     for i, frame_no in enumerate(picks):
         out = dst if i == 0 else dst.with_name(f"{stem}_f{i:02d}.bin")
         out.write_bytes(to_lvgl_bin(prepare(frames[frame_no], size), swap))
         written += 1
-    print(f"  {src.name:<24} -> {stem}.bin +{written - 1} frames "
-          f"({written * dst.stat().st_size / 1024:.0f} KB total)")
+    if written > 1:
+        print(f"  {src.name:<24} -> {stem}.bin +{written - 1} frames "
+              f"({written * dst.stat().st_size / 1024:.0f} KB total)")
+    else:
+        print(f"  {src.name:<24} -> {stem}.bin (static, no settled loop)")
     return written
 
 
