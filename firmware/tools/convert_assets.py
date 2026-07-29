@@ -175,6 +175,9 @@ def convert_animated(src: Path, dst: Path, swap: bool,
     ))
     stem = dst.stem
     dst.parent.mkdir(parents=True, exist_ok=True)
+    # Remove stale frames from an earlier run with a higher --frames value.
+    for old in dst.parent.glob(f"{stem}_f*.bin"):
+        old.unlink()
     written = 0
     for i, frame_no in enumerate(picks):
         out = dst if i == 0 else dst.with_name(f"{stem}_f{i:02d}.bin")
