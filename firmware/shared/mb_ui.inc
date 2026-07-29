@@ -132,6 +132,71 @@ static void disable_shadows(lv_obj_t* obj) {
   for (uint32_t i = 0; i < n; ++i) disable_shadows(lv_obj_get_child(obj, i));
 }
 
+// ---- Animated backgrounds -------------------------------------------------
+// Animated GIFs are exported by convert_assets.py as a numbered frame set:
+//   home1.bin  home1_f01.bin  home1_f02.bin ...
+// (frame 0 keeps the plain name so a single-frame card still works).
+// We cycle them with an LVGL timer instead of linking a GIF decoder — every
+// frame is already a plain RGB565 blob the 'S:' driver can stream.
+#ifndef MB_ANIM_MAX_FRAMES
+#define MB_ANIM_MAX_FRAMES 24
+#endif
+#ifndef MB_ANIM_PERIOD_MS
+#define MB_ANIM_PERIOD_MS 200
+#endif
+
+struct mb_anim_t {
+  lv_obj_t* img;
+  char      stem[24];   // "home1" (no .bin)
+  uint8_t   frames;
+  uint8_t   idx;
+};
+
+static void mb_anim_frame_name(const char* stem, uint8_t i, char* out, size_t n) {
+  if (i == 0) snprintf(out, n, "%s.bin", stem);
+  else        snprintf(out, n, "%s_f%02u.bin", stem, (unsigned)i);
+}
+
+static void mb_anim_timer_cb(lv_timer_t* t) {
+  mb_anim_t* a = (mb_anim_t*)lv_timer_get_user_data(t);
+  if (!a || !a->img || !lv_obj_is_valid(a->img)) { lv_timer_delete(t); return; }
+  a->idx = (a->idx + 1) % a->frames;
+  char name[40];
+  mb_anim_frame_name(a->stem, a->idx, name, sizeof(name));
+  const char* p = mb_assets::path(name);
+  if (p) lv_image_set_src(a->img, p);
+}
+
+static void mb_anim_free_cb(lv_event_t* e) {
+  mb_anim_t* a = (mb_anim_t*)lv_event_get_user_data(e);
+  delete a;
+}
+
+/** Attach a frame-cycling timer when extra frames exist on the card. */
+static void mb_anim_attach(lv_obj_t* img, const char* bg_asset) {
+  if (!img || !bg_asset) return;
+  char stem[24];
+  snprintf(stem, sizeof(stem), "%s", bg_asset);
+  char* dot = strrchr(stem, '.');
+  if (dot) *dot = '\0';
+
+  uint8_t frames = 1;
+  char name[40];
+  for (uint8_t i = 1; i < MB_ANIM_MAX_FRAMES; ++i) {
+    mb_anim_frame_name(stem, i, name, sizeof(name));
+    if (!mb_assets::has(name)) break;
+    frames = i + 1;
+  }
+  if (frames < 2) return;
+
+  Serial.printf("[ui] %s animated (%u frames)\n", bg_asset, (unsigned)frames);
+  mb_anim_t* a = new mb_anim_t{img, {0}, frames, 0};
+  snprintf(a->stem, sizeof(a->stem), "%s", stem);
+  lv_timer_t* t = lv_timer_create(mb_anim_timer_cb, MB_ANIM_PERIOD_MS, a);
+  lv_obj_add_event_cb(img, mb_anim_free_cb, LV_EVENT_DELETE, a);
+  (void)t;
+}
+
 /** Full-screen page container, optionally wallpapered from the SD card. */
 static lv_obj_t* page_create(const char* bg_asset, uint32_t fallback_bg) {
   lv_obj_t* p = lv_obj_create(lv_screen_active());
@@ -152,11 +217,13 @@ static lv_obj_t* page_create(const char* bg_asset, uint32_t fallback_bg) {
     if (lv_obj_get_width(img) == 0 || lv_image_get_src(img) == nullptr) {
       Serial.printf("[ui] %s did not decode (check lv_conf cache + .bin header)\n", bg_asset);
     }
+    mb_anim_attach(img, bg_asset);
   } else if (bg_asset) {
     Serial.printf("[ui] %s not on card — flat colour fallback\n", bg_asset);
   }
   return p;
 }
+
 
 /** Icon from the card; returns nullptr when the asset is missing. */
 static lv_obj_t* icon_create(lv_obj_t* parent, const char* asset, int x, int y) {
