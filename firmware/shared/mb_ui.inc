@@ -210,6 +210,7 @@ static lv_obj_t* page_create(const char* bg_asset, uint32_t fallback_bg) {
   lv_obj_remove_flag(p, LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_set_style_bg_color(p, lv_color_hex(fallback_bg), 0);
   lv_obj_set_style_bg_opa(p, LV_OPA_COVER, 0);
+  s_page_has_bg = false;
   if (bg_asset && mb_assets::has(bg_asset)) {
     lv_obj_t* img = lv_image_create(p);
     lv_image_set_src(img, mb_assets::path(bg_asset));
@@ -220,6 +221,8 @@ static lv_obj_t* page_create(const char* bg_asset, uint32_t fallback_bg) {
     // instead of silently showing the flat fallback colour.
     if (lv_obj_get_width(img) == 0 || lv_image_get_src(img) == nullptr) {
       Serial.printf("[ui] %s did not decode (check lv_conf cache + .bin header)\n", bg_asset);
+    } else {
+      s_page_has_bg = true;
     }
     mb_anim_attach(img, bg_asset);
   } else if (bg_asset) {
@@ -237,6 +240,19 @@ static lv_obj_t* icon_create(lv_obj_t* parent, const char* asset, int x, int y) 
   lv_obj_set_pos(img, x, y);
   lv_obj_remove_flag(img, LV_OBJ_FLAG_CLICKABLE);
   return img;
+}
+
+/** Back chevron — ONLY drawn when the page has no SD wallpaper. Every piece
+ *  of artwork already includes its own arrow, so drawing ours as well is what
+ *  made the arrow appear twice on music / message / meds / home2 / ... */
+static lv_obj_t* back_icon(lv_obj_t* parent, int x, int y) {
+  if (s_page_has_bg) return nullptr;
+  lv_obj_t* l = lv_label_create(parent);
+  lv_label_set_text(l, LV_SYMBOL_LEFT);
+  lv_obj_set_style_text_color(l, lv_color_hex(0x7fe3b0), 0);
+  lv_obj_set_style_text_font(l, &lv_font_montserrat_20, 0);
+  lv_obj_set_pos(l, x, y);
+  return l;
 }
 
 static void icon_swap(lv_obj_t* img, const char* asset) {
