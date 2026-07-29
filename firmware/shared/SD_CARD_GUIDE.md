@@ -155,3 +155,21 @@ breadboard wiring.
 
 Re-run the converter, drop the new `.bin` files on the card, power-cycle the
 board. No reflash needed — the firmware reads the card on every boot.
+
+## Animated backgrounds
+
+Animated GIFs are exported as a numbered frame set:
+
+```
+home1.bin  home1_f01.bin  home1_f02.bin ...
+```
+
+Frame 0 keeps the plain name, so a card written with `--frames 1` still works.
+The firmware detects the extra frames at page creation and cycles them with an
+LVGL timer (200 ms/frame) — no GIF decoder is linked into the build.
+
+```
+python3 firmware/tools/convert_assets.py --out /Volumes/MINDBUDDY/mindbuddy --frames 8
+```
+
+Each 240x320 frame is ~151 KB, so keep `--frames` small (6–10) on small cards.
