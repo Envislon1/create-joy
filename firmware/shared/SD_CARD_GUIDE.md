@@ -44,7 +44,8 @@ python3 firmware/tools/convert_assets.py \
 ```
 
 The converter finds each source image by name (case-insensitive, any of
-`.png .gif .jpg .bmp .webp`, animated GIFs use frame 1), scales the backgrounds
+`.png .gif .jpg .bmp .webp`; animated GIFs use the FINAL, fully built
+frame — never frame 1, which in this artwork is a black intro frame), scales the backgrounds
 to the 240×320 panel, and writes LVGL v9 RGB565 binaries.
 
 If colours come out right but everything is *inverted* (orange skin, blue
@@ -164,7 +165,9 @@ Animated GIFs are exported as a numbered frame set:
 home1.bin  home1_f01.bin  home1_f02.bin ...
 ```
 
-Frame 0 keeps the plain name, so a card written with `--frames 1` still works.
+`home1.bin` (frame 0) is the finished screen — the intro build-up frames are
+dropped and only the settled, loopable tail of the GIF is exported. A card
+written with `--frames 1` therefore still shows the complete artwork.
 The firmware detects the extra frames at page creation and cycles them with an
 LVGL timer (200 ms/frame) — no GIF decoder is linked into the build.
 
