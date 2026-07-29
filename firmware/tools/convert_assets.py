@@ -98,14 +98,53 @@ def to_lvgl_bin(img: Image.Image, swap: bool) -> bytes:
     return bytes(out)
 
 
+def composite_frames(img: Image.Image) -> list[Image.Image]:
+    """Flatten an animated GIF into a list of complete RGB frames.
+
+    A GIF stores most frames as a small delta patch over the previous one, and
+    many exported animations start with an empty (transparent / black) frame.
+    Reading `img.convert("RGB")` straight after `seek()` therefore gives a
+    black or blank picture — which is exactly what the splash and home pages
+    showed on the panel. Painting each patch onto a persistent canvas gives the
+    picture the viewer actually sees.
+    """
+    total = getattr(img, "n_frames", 1)
+    canvas = Image.new("RGBA", img.size, (0, 0, 0, 255))
+    frames: list[Image.Image] = []
+    for i in range(total):
+        img.seek(i)
+        patch = img.convert("RGBA")
+        canvas = Image.alpha_composite(canvas, patch)
+        frames.append(canvas.convert("RGB"))
+    return frames
+
+
+def frame_score(frame: Image.Image) -> int:
+    """Rough "how much is on this frame" measure — used to drop blank frames."""
+    small = frame.resize((32, 32), Image.BILINEAR)
+    px = list(small.getdata())
+    lo = min(sum(p) for p in px)
+    hi = max(sum(p) for p in px)
+    return hi - lo
+
+
+def prepare(frame: Image.Image, size: tuple[int, int] | None) -> Image.Image:
+    if size and frame.size != size:
+        return frame.resize(size, Image.LANCZOS)
+    return frame
+
+
 def convert(src: Path, dst: Path, swap: bool, size: tuple[int, int] | None) -> None:
     img = Image.open(src)
     if getattr(img, "is_animated", False):
-        img.seek(0)  # first frame only — the panels are static artwork
-    if size and img.size != size:
-        img = img.resize(size, Image.LANCZOS)
+        # Pick the busiest frame rather than frame 0 — animated artwork often
+        # opens on an empty frame.
+        frames = composite_frames(img)
+        frame = max(frames, key=frame_score)
+    else:
+        frame = img
     dst.parent.mkdir(parents=True, exist_ok=True)
-    dst.write_bytes(to_lvgl_bin(img, swap))
+    dst.write_bytes(to_lvgl_bin(prepare(frame, size), swap))
     print(f"  {src.name:<24} -> {dst.relative_to(dst.parents[1])}  ({dst.stat().st_size / 1024:.0f} KB)")
 
 
@@ -118,24 +157,28 @@ def convert_animated(src: Path, dst: Path, swap: bool,
     name, which means a firmware that ignores animation still shows artwork.
     """
     img = Image.open(src)
-    total = getattr(img, "n_frames", 1)
-    if total <= 1 or max_frames <= 1:
+    if not getattr(img, "is_animated", False) or max_frames <= 1:
         convert(src, dst, swap, size)
         return 1
 
+    frames = composite_frames(img)
+    # Drop the blank lead-in frames so the first thing the panel shows is real
+    # artwork (this is why splash.bin was pure black).
+    best = max(frame_score(f) for f in frames)
+    frames = [f for f in frames if frame_score(f) >= best * 0.35] or frames
+
+    total = len(frames)
     # Even sampling so a 60-frame GIF still fits the SD card / RAM budget.
-    picks = [round(i * (total - 1) / (max_frames - 1)) for i in range(min(max_frames, total))]
-    picks = sorted(dict.fromkeys(picks))
+    n = min(max_frames, total)
+    picks = sorted(dict.fromkeys(
+        round(i * (total - 1) / max(n - 1, 1)) for i in range(n)
+    ))
     stem = dst.stem
     dst.parent.mkdir(parents=True, exist_ok=True)
     written = 0
     for i, frame_no in enumerate(picks):
-        img.seek(frame_no)
-        frame = img.convert("RGB")
-        if size and frame.size != size:
-            frame = frame.resize(size, Image.LANCZOS)
         out = dst if i == 0 else dst.with_name(f"{stem}_f{i:02d}.bin")
-        out.write_bytes(to_lvgl_bin(frame, swap))
+        out.write_bytes(to_lvgl_bin(prepare(frames[frame_no], size), swap))
         written += 1
     print(f"  {src.name:<24} -> {stem}.bin +{written - 1} frames "
           f"({written * dst.stat().st_size / 1024:.0f} KB total)")
