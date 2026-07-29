@@ -109,6 +109,39 @@ def convert(src: Path, dst: Path, swap: bool, size: tuple[int, int] | None) -> N
     print(f"  {src.name:<24} -> {dst.relative_to(dst.parents[1])}  ({dst.stat().st_size / 1024:.0f} KB)")
 
 
+def convert_animated(src: Path, dst: Path, swap: bool,
+                     size: tuple[int, int] | None, max_frames: int) -> int:
+    """Animated GIF -> name.bin, name_f01.bin, name_f02.bin ...
+
+    The firmware cycles those frames with a timer (see mb_ui.inc), so no GIF
+    decoder has to be linked into the ESP32 build. Frame 0 keeps the plain
+    name, which means a firmware that ignores animation still shows artwork.
+    """
+    img = Image.open(src)
+    total = getattr(img, "n_frames", 1)
+    if total <= 1 or max_frames <= 1:
+        convert(src, dst, swap, size)
+        return 1
+
+    # Even sampling so a 60-frame GIF still fits the SD card / RAM budget.
+    picks = [round(i * (total - 1) / (max_frames - 1)) for i in range(min(max_frames, total))]
+    picks = sorted(dict.fromkeys(picks))
+    stem = dst.stem
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    written = 0
+    for i, frame_no in enumerate(picks):
+        img.seek(frame_no)
+        frame = img.convert("RGB")
+        if size and frame.size != size:
+            frame = frame.resize(size, Image.LANCZOS)
+        out = dst if i == 0 else dst.with_name(f"{stem}_f{i:02d}.bin")
+        out.write_bytes(to_lvgl_bin(frame, swap))
+        written += 1
+    print(f"  {src.name:<24} -> {stem}.bin +{written - 1} frames "
+          f"({written * dst.stat().st_size / 1024:.0f} KB total)")
+    return written
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Convert MindBuddy TFT artwork to LVGL .bin")
     ap.add_argument("--src", default="MindBuddy Assets/TFT Assets",
@@ -117,6 +150,8 @@ def main() -> int:
     ap.add_argument("--width", type=int, default=240)
     ap.add_argument("--height", type=int, default=320)
     ap.add_argument("--no-swap", action="store_true", help="little-endian RGB565")
+    ap.add_argument("--frames", type=int, default=8,
+                    help="max frames to export per animated GIF (1 = static first frame only)")
     args = ap.parse_args()
 
     src_root = Path(args.src)
@@ -134,7 +169,7 @@ def main() -> int:
         if not found:
             missing.append(name)
             continue
-        convert(found, out_root / f"{name}.bin", swap, panel)
+        convert_animated(found, out_root / f"{name}.bin", swap, panel, args.frames)
 
     print("icons -> native size")
     for name in ICONS:
@@ -143,6 +178,7 @@ def main() -> int:
             missing.append(f"icons/{name}")
             continue
         convert(found, out_root / "icons" / f"{name}.bin", swap, None)
+
 
     if missing:
         print("\nMISSING (firmware falls back to drawn shapes for these):")
