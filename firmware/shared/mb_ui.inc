@@ -924,7 +924,7 @@ static void build_calling() {
   lv_obj_set_style_text_font(call_num_lbl, &lv_font_montserrat_20, 0);
   lv_obj_set_style_text_align(call_num_lbl, LV_TEXT_ALIGN_CENTER, 0);
   lv_obj_set_width(call_num_lbl, 240);
-  lv_obj_align(call_num_lbl, LV_ALIGN_TOP_MID, 0, 108);
+  lv_obj_align(call_num_lbl, LV_ALIGN_TOP_MID, 0, 124);
 
   touch_region(p_calling, SX(100), 218, SX(82), 82, "HANG UP", [](lv_event_t*) {
 #if MB_HAS_MODEM
