@@ -116,7 +116,7 @@ sudo usermod -aG dialout,audio,gpio "$USER"
 # log out and back in for group changes to apply
 ```
 
-### AC108 4-Mic driver (RPI_AC108)
+### Microphone option A — USB microphone (recommended, always works)
 
 The RPI_AC108 is **not** a plain I2S mic — the AC108 codec must be configured
 over I2C by the `ac108` kernel driver, so a generic `dtoverlay=googlevoicehat`
