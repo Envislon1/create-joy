@@ -123,19 +123,41 @@ over I2C by the `ac108` kernel driver, so a generic `dtoverlay=googlevoicehat`
 or `i2s-mic` setup will capture silence. Install the AC108 variant explicitly:
 
 ```bash
-# NOTE: `raspberrypi-kernel-headers` no longer exists on Bookworm/Trixie.
-# Pi 5 uses the 2712 kernel flavour; older Pis use rpi-v8.
+# NOTE: `raspberrypi-kernel-headers` / `linux-raspi` do NOT exist on
+# Bookworm/Trixie — that name is Ubuntu/older Raspbian. Pi 5 uses the 2712
+# flavour; older Pis use rpi-v8.
 sudo apt install -y i2c-tools dkms linux-headers-rpi-2712
 # equivalently: sudo apt install -y linux-headers-$(uname -r)
 git clone https://github.com/HinTak/seeed-voicecard.git
 cd seeed-voicecard
-git checkout v6.6            # match your kernel: uname -r
+git checkout v6.12           # pick the branch <= your kernel: uname -r
 sudo ./install.sh ac108      # AC108 4-mic driver, NOT the default ac101/2-mic
 sudo reboot
 ```
 
 The `ac108` argument is what selects the quad-ADC driver + overlay for this
 board. On kernels the repo does not yet track, add `--compat-kernel`.
+
+> **Kernel 6.15 or newer (e.g. `6.18.39+rpt-rpi-2712`) will NOT build.**
+> HinTak's newest branch is `v6.14`, and the ALSA SoC API changed after that,
+> so DKMS fails with `Bad return status for module build` (see
+> `/var/lib/dkms/seeed-voicecard/<ver>/build/make.log`). Also note the install
+> script "succeeds" and asks you to reboot even when the build failed — always
+> check `arecord -l` afterwards. Two ways out:
+>
+> 1. **Pin the kernel to an LTS the driver supports** (recommended):
+>    ```bash
+>    apt list -a linux-image-rpi-2712        # find an available 6.12.x
+>    sudo apt install -y linux-image-rpi-2712=<6.12 version> \
+>                        linux-headers-rpi-2712=<6.12 version>
+>    sudo apt-mark hold linux-image-rpi-2712 linux-headers-rpi-2712
+>    sudo reboot
+>    # then: cd ~/seeed-voicecard && git checkout v6.12 && sudo ./install.sh ac108
+>    ```
+> 2. **Skip the AC108 board** and use any USB microphone (or a USB audio
+>    dongle). No kernel module is needed; just set `ALSA_IN=plughw:1,0` and
+>    `MIC_CHANNELS=1` in `.env`. Everything else in the runtime is unchanged.
+
 
 > **Before building:** the headers must match the *running* kernel, so run
 > `uname -r` and confirm `/lib/modules/$(uname -r)/build` exists. If a previous
