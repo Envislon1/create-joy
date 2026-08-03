@@ -116,66 +116,69 @@ sudo usermod -aG dialout,audio,gpio "$USER"
 # log out and back in for group changes to apply
 ```
 
-### AC108 4-Mic driver (RPI_AC108)
+### Microphone option A — USB microphone (recommended, always works)
 
-The RPI_AC108 is **not** a plain I2S mic — the AC108 codec must be configured
-over I2C by the `ac108` kernel driver, so a generic `dtoverlay=googlevoicehat`
-or `i2s-mic` setup will capture silence. Install the AC108 variant explicitly:
+The simplest reliable path is a USB microphone or a USB audio dongle with a
+3.5 mm mic input. No kernel driver is required and it works on every Pi OS
+version.
 
 ```bash
-# NOTE: `raspberrypi-kernel-headers` / `linux-raspi` do NOT exist on
+# Plug in the USB mic, then find its ALSA card/device
+arecord -l
+# Example: card 1, device 0  ->  plughw:1,0
+```
+
+Edit `firmware/raspi5/.env`:
+
+```env
+ALSA_IN=plughw:1,0
+MIC_CHANNELS=1
+```
+
+Everything else in the runtime is unchanged.
+
+### Microphone option B — AC108 4-Mic driver (RPI_AC108)
+
+Only choose this if a 6.12 kernel package is actually available on your Pi:
+
+```bash
+apt list -a linux-image-rpi-2712 | grep '6.12'
+```
+
+If the command returns **nothing**, the AC108 driver cannot be built on your
+current kernel and you should use the USB microphone option above. Do not
+attempt the steps below.
+
+If a 6.12 package is listed, install it and pin it before building the driver:
+
+```bash
+# Replace <version> with the exact 6.12 package version shown by apt list
+sudo apt install -y \
+  linux-image-rpi-2712=<version> \
+  linux-headers-rpi-2712=<version>
+sudo apt-mark hold linux-image-rpi-2712 linux-headers-rpi-2712
+sudo reboot
+```
+
+Then build the AC108 driver. The RPI_AC108 is **not** a plain I2S mic — the
+AC108 codec must be configured over I2C by the `ac108` kernel driver, so a
+generic `dtoverlay=googlevoicehat` or `i2s-mic` setup will capture silence.
+
+```bash
+# NOTE: `raspberrypi-kernel-headers` / `linux-rpi` do NOT exist on
 # Bookworm/Trixie — that name is Ubuntu/older Raspbian. Pi 5 uses the 2712
 # flavour; older Pis use rpi-v8.
 sudo apt install -y i2c-tools dkms linux-headers-rpi-2712
 # equivalently: sudo apt install -y linux-headers-$(uname -r)
 git clone https://github.com/HinTak/seeed-voicecard.git
 cd seeed-voicecard
-git checkout v6.12           # pick the branch <= your kernel: uname -r
+git checkout v6.12           # must be <= your running kernel: uname -r
 sudo ./install.sh ac108      # AC108 4-mic driver, NOT the default ac101/2-mic
 sudo reboot
 ```
 
 The `ac108` argument is what selects the quad-ADC driver + overlay for this
-board. On kernels the repo does not yet track, add `--compat-kernel`.
-
-> **Kernel 6.15 or newer (e.g. `6.18.39+rpt-rpi-2712`) will NOT build.**
-> HinTak's newest branch is `v6.14`, and the ALSA SoC API changed after that,
-> so DKMS fails with `Bad return status for module build` (see
-> `/var/lib/dkms/seeed-voicecard/<ver>/build/make.log`). Also note the install
-> script "succeeds" and asks you to reboot even when the build failed — always
-> check `arecord -l` afterwards. Two ways out:
->
-> 1. **Pin the kernel to an LTS the driver supports** (recommended):
->    ```bash
->    apt list -a linux-image-rpi-2712        # find an available 6.12.x
->    sudo apt install -y linux-image-rpi-2712=<6.12 version> \
->                        linux-headers-rpi-2712=<6.12 version>
->    sudo apt-mark hold linux-image-rpi-2712 linux-headers-rpi-2712
->    sudo reboot
->    # then: cd ~/seeed-voicecard && git checkout v6.12 && sudo ./install.sh ac108
->    ```
-> 2. **Skip the AC108 board** and use any USB microphone (or a USB audio
->    dongle). No kernel module is needed; just set `ALSA_IN=plughw:1,0` and
->    `MIC_CHANNELS=1` in `.env`. Everything else in the runtime is unchanged.
-
-
-> **Before building:** the headers must match the *running* kernel, so run
-> `uname -r` and confirm `/lib/modules/$(uname -r)/build` exists. If a previous
-> `apt` run ended in `dpkg: error processing package linux-image-rpi-v8`, the
-> kernel packages are half-installed — usually a full `/boot/firmware`.
-> Fix it first, then reboot, then build:
->
-> ```bash
-> df -h /boot/firmware      # 90-100% used = the cause
-> sudo apt clean
-> sudo dpkg --configure -a
-> sudo apt --fix-broken install
-> sudo apt full-upgrade -y && sudo reboot
-> ```
->
-> If space is still tight, purge old kernel versions (never the one from
-> `uname -r`) with `sudo apt purge linux-image-<old-version>` followed by
-> `sudo apt autoremove --purge -y`.
+board.
 
 After reboot:
 
