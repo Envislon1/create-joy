@@ -1,3 +1,0 @@
-1. This directory contains the model screens that we want to produce using the contents in the TFT Assets
-2. You are to study the positioning of each asset and carefully place them according to this model
-3. Use this model to design the touch regions.
