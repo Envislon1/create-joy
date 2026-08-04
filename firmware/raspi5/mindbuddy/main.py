@@ -27,6 +27,7 @@ from .llm import HybridLLM
 from .tts import HybridTTS
 from .supabase_sync import SupabaseSync
 from .music import MusicPlayer
+from .exercises import CATEGORY_LABELS, guide_prompt, pick as pick_exercise
 from .prompts import SYSTEM_PROMPT, build_mode_context, build_language_directive, language_name
 
 logging.basicConfig(
@@ -128,6 +129,7 @@ class MindBuddy:
         self.pipeline_pref = CFG.default_pipeline
         self.history: List[Dict] = []
         self.in_call = False
+        self.dnd = False
         self.online = False
         # Default to LOCAL server; auto-mode flips to cloud only when the
         # online watcher confirms network is up.
@@ -263,6 +265,11 @@ class MindBuddy:
         elif t == "call_dial":       self.link.send({"type": "call_dial", "number": m.get("number", "")}) if self.link else None
         elif t == "sms_send":        self.link.send({"type": "sms_send", **m}) if self.link else None
         elif t == "mood_set":        self._on_mood(m.get("mood", ""))
+        elif t == "exercise_set":   self._on_exercise(m.get("category", "RANDOM"))
+        elif t == "dnd_set":        self.dnd = bool(m.get("dnd", False))
+        elif t == "call_answer":    self._enter_call()
+        elif t == "call_hangup":    self._leave_call()
+        elif t == "meds_request":   self.link.send({"type": "meds", "items": getattr(self, "_meds_cache", []) or []}) if self.link else None
         elif t == "sms_sent":        log.info("sms sent to %s: %s", m.get("to"), m.get("text"))
         elif t == "contact_saved":   log.info("contact saved: %s %s", m.get("name"), m.get("number"))
         elif t == "med_set":         self._on_med_set(m)
@@ -311,6 +318,15 @@ class MindBuddy:
             f"INTERNAL EVENT: the user just tapped the mood '{mood}' on the device. "
             "Acknowledge it warmly in 1-2 short sentences and ask one gentle follow-up."
         )
+
+    def _on_exercise(self, category: str):
+        """Exercise category tapped on the TFT -> narrate one exercise."""
+        cat, name = pick_exercise(category)
+        log.info("exercise: %s / %s", cat, name)
+        if self.link:
+            self.link.send({"type": "exercise", "category": cat, "name": name,
+                            "label": CATEGORY_LABELS.get(cat, cat)})
+        self.turn_q.put(guide_prompt(cat, name, self.mode))
 
     # --------------- supabase ---------------
     def _on_supabase_state(self, s: dict):
