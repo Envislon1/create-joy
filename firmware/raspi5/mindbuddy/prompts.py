@@ -226,3 +226,23 @@ MODE_GUIDANCE = {
 def build_mode_context(mode: str) -> str:
     m = (mode or "GENERAL").upper()
     return MODE_GUIDANCE.get(m, MODE_GUIDANCE["GENERAL"])
+
+
+# ---------------- Exercise catalogue ----------------
+# MindBuddy ships 100 guided exercises in five categories (see exercises.py).
+# The model must only ever offer exercises from this list so the TFT screen,
+# the narration and the device catalogue always agree.
+from .exercises import CATEGORY_LABELS, catalogue_text  # noqa: E402
+
+
+def build_exercise_directive() -> str:
+    return (
+        "EXERCISE LIBRARY — you may only offer exercises from this list. "
+        "Every one is equipment-free, doable sitting or lying down (except "
+        "mindful walking) and lasts 1-10 minutes. Narrate them step by step, "
+        "slowly, with pauses, and check in at the end.\n"
+        + catalogue_text()
+    )
+
+
+EXERCISE_DIRECTIVE = build_exercise_directive()
