@@ -329,3 +329,27 @@ The local TTS engine (Kokoro / Piper) is also switchable live from
   from `/boot/firmware/config.txt`, or `dtoverlay=disable-bt` was not
   added. Re-check the config, reboot, then `ls /dev/ttyAMA*` — you must
   see `ttyAMA10`.
+
+## TFT artwork (matches /tft-simulator)
+
+The Pi now renders the same shipped artwork as the web simulator. Fetch it
+once into the assets folder the UI reads:
+
+```bash
+python3 firmware/tools/fetch_pi_assets.py --out firmware/raspi5/assets
+```
+
+Then set (optional, this is the default) in `.env`:
+
+```env
+UI_ASSETS=./assets
+```
+
+Notes:
+* Home page: the top-left tile is **Mode**; there is no manual chat tile —
+  the MB Chat page opens automatically when MindBuddy answers.
+* Exercise page: the five categories (plus Random) map to the 100-exercise
+  catalogue in `mindbuddy/exercises.py`, which is also injected into the LLM
+  system prompt so the model only offers exercises the device ships.
+* If the assets folder is empty the UI silently falls back to the old
+  vector-drawn screens.
