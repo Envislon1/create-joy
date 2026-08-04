@@ -209,14 +209,13 @@ function TftSimulator() {
 
       case "home":
         return [
-          { id: "chat", x: 22, y: 64, w: 76, h: 76, label: "MB Chat", action: () => goto("chat", "Home → MB Response") },
+          { id: "mode", x: 22, y: 64, w: 76, h: 76, label: "Mode", action: () => goto("mode", "Home → Mode selection") },
           { id: "med", x: 104, y: 64, w: 76, h: 76, label: "Meds", action: () => setModal({ kind: "meds", meds: st.meds, onSave: (m) => { patch({ meds: m }); pushLog(`Meds updated (${m.length})`); } }) },
           { id: "music", x: 181, y: 63, w: 77, h: 77, label: "Music", action: () => goto("music", "Home → Music") },
           { id: "mood", x: 23, y: 146, w: 75, h: 75, label: "Mood", action: () => goto("mood", "Home → Mood") },
           { id: "settings", x: 104, y: 146, w: 76, h: 76, label: "Settings", action: () => goto("settings", "Home → Settings") },
           { id: "exercise", x: 181, y: 146, w: 77, h: 77, label: "Exercise", action: () => goto("exercise", "Home → Exercise") },
           { id: "phone", x: 99, y: 233, w: 82, h: 82, label: "Keypad", action: () => goto("keypad", "Home → Keypad") },
-          { id: "mode", x: 4, y: 34, w: 96, h: 26, label: "Mode", action: () => goto("mode", "Home → Mode selection") },
         ];
 
       case "mode":
