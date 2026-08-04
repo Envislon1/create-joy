@@ -28,7 +28,8 @@ from .tts import HybridTTS
 from .supabase_sync import SupabaseSync
 from .music import MusicPlayer
 from .exercises import CATEGORY_LABELS, guide_prompt, pick as pick_exercise
-from .prompts import SYSTEM_PROMPT, build_mode_context, build_language_directive, language_name
+from .prompts import (SYSTEM_PROMPT, EXERCISE_DIRECTIVE, build_mode_context,
+                      build_language_directive, language_name)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -465,6 +466,7 @@ class MindBuddy:
             SYSTEM_PROMPT,
             build_mode_context(self.mode),
             build_language_directive(self.language),
+            EXERCISE_DIRECTIVE,
         ])
         return {"role": "system", "content": content}
 
